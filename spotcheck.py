@@ -4036,9 +4036,65 @@ class QualitativeAnalysisFrame2(Frame):
             try:
                 wb = load_workbook(path)
                 sheet = wb.active
-                for i in range(0,48):
-                    pos = 'B' + str(i+12)
-                    self.id_list[i] = sheet[pos].value
+                # ~ for i in range(0,48):
+                    # ~ pos = 'B' + str(i+12)
+                    # ~ self.id_list[i] = sheet[pos].value
+                    
+                self.id_list[0] = sheet["B12"].value
+                self.id_list[1] = sheet["B20"].value
+                self.id_list[2] = sheet["B28"].value
+                self.id_list[3] = sheet["B36"].value
+                self.id_list[4] = sheet["B44"].value
+                self.id_list[5] = sheet["B52"].value
+                
+                self.id_list[6] = sheet["B13"].value
+                self.id_list[7] = sheet["B21"].value
+                self.id_list[8] = sheet["B29"].value
+                self.id_list[9] = sheet["B37"].value
+                self.id_list[10] = sheet["B45"].value
+                self.id_list[11] = sheet["B53"].value
+                
+                self.id_list[12] = sheet["B14"].value
+                self.id_list[13] = sheet["B22"].value
+                self.id_list[14] = sheet["B30"].value
+                self.id_list[15] = sheet["B38"].value
+                self.id_list[16] = sheet["B46"].value
+                self.id_list[17] = sheet["B54"].value
+                
+                self.id_list[18] = sheet["B15"].value
+                self.id_list[19] = sheet["B23"].value
+                self.id_list[20] = sheet["B31"].value
+                self.id_list[21] = sheet["B39"].value
+                self.id_list[22] = sheet["B47"].value
+                self.id_list[23] = sheet["B55"].value
+                
+                self.id_list[24] = sheet["B16"].value
+                self.id_list[25] = sheet["B24"].value
+                self.id_list[26] = sheet["B32"].value
+                self.id_list[27] = sheet["B40"].value
+                self.id_list[28] = sheet["B48"].value
+                self.id_list[29] = sheet["B56"].value
+                
+                self.id_list[30] = sheet["B17"].value
+                self.id_list[31] = sheet["B25"].value
+                self.id_list[32] = sheet["B33"].value
+                self.id_list[33] = sheet["B41"].value
+                self.id_list[34] = sheet["B49"].value
+                self.id_list[35] = sheet["B57"].value
+                
+                self.id_list[36] = sheet["B18"].value
+                self.id_list[37] = sheet["B26"].value
+                self.id_list[38] = sheet["B34"].value
+                self.id_list[39] = sheet["B42"].value
+                self.id_list[40] = sheet["B50"].value
+                self.id_list[41] = sheet["B58"].value
+                
+                self.id_list[42] = sheet["B19"].value
+                self.id_list[43] = sheet["B27"].value
+                self.id_list[44] = sheet["B35"].value
+                self.id_list[45] = sheet["B43"].value
+                self.id_list[46] = sheet["B51"].value
+                self.id_list[47] = sheet["B59"].value
 
                 tmp = 0
                 for i in range(len(path)):
@@ -4895,15 +4951,71 @@ class IDCreateFrame(Frame):
         file_create_done = 0
         msg = messagebox.askquestion("","Do you want to create file ?")
         if(msg=="yes"):
+            self.well_button_change_pos = list(range(48))
             wb = Workbook()
             sheet = wb.active
-
+            
+            self.well_button_change_pos[0] = self.well_button[0]['text']
+            self.well_button_change_pos[1] = self.well_button[6]['text']
+            self.well_button_change_pos[2] = self.well_button[12]['text']
+            self.well_button_change_pos[3] = self.well_button[18]['text']
+            self.well_button_change_pos[4] = self.well_button[24]['text']
+            self.well_button_change_pos[5] = self.well_button[30]['text']
+            self.well_button_change_pos[6] = self.well_button[36]['text']
+            self.well_button_change_pos[7] = self.well_button[42]['text']
+            
+            self.well_button_change_pos[8] = self.well_button[1]['text']
+            self.well_button_change_pos[9] = self.well_button[7]['text']
+            self.well_button_change_pos[10] = self.well_button[13]['text']
+            self.well_button_change_pos[11] = self.well_button[19]['text']
+            self.well_button_change_pos[12] = self.well_button[25]['text']
+            self.well_button_change_pos[13] = self.well_button[31]['text']
+            self.well_button_change_pos[14] = self.well_button[37]['text']
+            self.well_button_change_pos[15] = self.well_button[43]['text']
+            
+            self.well_button_change_pos[16] = self.well_button[2]['text']
+            self.well_button_change_pos[17] = self.well_button[8]['text']
+            self.well_button_change_pos[18] = self.well_button[14]['text']
+            self.well_button_change_pos[19] = self.well_button[20]['text']
+            self.well_button_change_pos[20] = self.well_button[26]['text']
+            self.well_button_change_pos[21] = self.well_button[32]['text']
+            self.well_button_change_pos[22] = self.well_button[38]['text']
+            self.well_button_change_pos[23] = self.well_button[44]['text']
+            
+            self.well_button_change_pos[24] = self.well_button[3]['text']
+            self.well_button_change_pos[25] = self.well_button[9]['text']
+            self.well_button_change_pos[26] = self.well_button[15]['text']
+            self.well_button_change_pos[27] = self.well_button[21]['text']
+            self.well_button_change_pos[28] = self.well_button[27]['text']
+            self.well_button_change_pos[29] = self.well_button[33]['text']
+            self.well_button_change_pos[30] = self.well_button[39]['text']
+            self.well_button_change_pos[31] = self.well_button[45]['text']
+            
+            self.well_button_change_pos[32] = self.well_button[4]['text']
+            self.well_button_change_pos[33] = self.well_button[10]['text']
+            self.well_button_change_pos[34] = self.well_button[16]['text']
+            self.well_button_change_pos[35] = self.well_button[22]['text']
+            self.well_button_change_pos[36] = self.well_button[28]['text']
+            self.well_button_change_pos[37] = self.well_button[34]['text']
+            self.well_button_change_pos[38] = self.well_button[40]['text']
+            self.well_button_change_pos[39] = self.well_button[46]['text']
+            
+            self.well_button_change_pos[40] = self.well_button[5]['text']
+            self.well_button_change_pos[41] = self.well_button[11]['text']
+            self.well_button_change_pos[42] = self.well_button[17]['text']
+            self.well_button_change_pos[43] = self.well_button[23]['text']
+            self.well_button_change_pos[44] = self.well_button[29]['text']
+            self.well_button_change_pos[45] = self.well_button[35]['text']
+            self.well_button_change_pos[46] = self.well_button[41]['text']
+            self.well_button_change_pos[47] = self.well_button[47]['text']
+            
             for i in range(0,48):
                 pos = "B" + str(i+12)
-                if(self.well_button[i]['text'] != "#"):
-                    sheet[pos] = self.well_button[i]['text']
+                if(self.well_button_change_pos[i] != "#"):
+                    sheet[pos] = self.well_button_change_pos[i]
                 else:
                     sheet[pos] = "N/A"
+                    
             
             if(self.direct_create == 1):
                 wb.save(id_path + '/' + self.base_window.qualitative_analysis_0.experiment_name + '.xlsm')
