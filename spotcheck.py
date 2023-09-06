@@ -3153,7 +3153,7 @@ class QualitativeAnalysisFrame3(Frame):
             try:
                 ftp = FTP(self.base_window.server_setting.ip_set, self.base_window.server_setting.user_set, self.base_window.server_setting.password_set, timeout=30)
                 ftp.cwd(self.base_window.server_setting.path_set + '/Processed_Data/Screening')
-                file = open(self.base_window.qualitative_analysis_1.analysis_result_folder + '/' + self.base_window.qualitative_analysis_0.experiment_name + '.xlsm','rb')
+                file = open(self.base_window.qualitative_analysis_1.result_folder_path + '/' + self.base_window.qualitative_analysis_0.experiment_name + '.xlsm','rb')
                 ftp.storbinary('STOR ' + self.base_window.qualitative_analysis_0.experiment_name + ".xlsm", file)
                 ftp.quit()
             except Exception as e :
@@ -5401,7 +5401,7 @@ class ServerSettingFrame(Frame):
 
     def back_clicked(self):
         self.base_window.forget_page()
-        self.base_window.page_num = self.base_window.frame_list.index(self.base_window.main_menu)
+        self.base_window.page_num = self.base_window.frame_list.index(self.base_window.setting)
         self.base_window.switch_page()
 
     def connect_clicked(self):
@@ -5591,7 +5591,7 @@ class EmailSettingFrame(Frame):
 
     def back_clicked(self):
         self.base_window.forget_page()
-        self.base_window.page_num = self.base_window.frame_list.index(self.base_window.main_menu)
+        self.base_window.page_num = self.base_window.frame_list.index(self.base_window.setting)
         self.base_window.switch_page()
 
     def check_status(self):
