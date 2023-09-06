@@ -98,7 +98,7 @@ LOGIN_BUTTON_BGD_COLOR = "grey85"
 LOGIN_BUTTON_TXT_COLOR = "black"
 
 NA_COLOR = "grey82"
-ERROR_COLOR = "yellow2"
+ERROR_COLOR = "DodgerBLue2"
 NEGATIVE_COLOR = "green3"
 POSITIVE_COLOR = "red"
 LOW_COPY_COLOR = "pink"
@@ -2823,7 +2823,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+12)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c1]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+12)] = 'E'
-                            sheet['D'+str(i+12)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+12)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c1]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+12)] = 'P_L'
                                 sheet['D'+str(i+12)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
@@ -2863,7 +2863,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+20)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c2]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+20)] = 'E'
-                            sheet['D'+str(i+20)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+20)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c2]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+20)] = 'P_L'
                                 sheet['D'+str(i+20)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
@@ -2903,7 +2903,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+28)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c3]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+28)] = 'E'
-                            sheet['D'+str(i+28)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+28)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c3]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+28)] = 'P_L'
                                 sheet['D'+str(i+28)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
@@ -2943,7 +2943,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+36)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c4]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+36)] = 'E'
-                            sheet['D'+str(i+36)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+36)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c4]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+36)] = 'P_L'
                                 sheet['D'+str(i+36)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
@@ -2983,7 +2983,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+44)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c5]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+44)] = 'E'
-                            sheet['D'+str(i+44)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+44)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c5]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+44)] = 'P_L'
                                 sheet['D'+str(i+44)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
@@ -3023,7 +3023,7 @@ class QualitativeAnalysisFrame3(Frame):
                             sheet['D'+str(i+52)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
                         if(float(result_label[c6]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_2):
                             sheet['D'+str(i+52)] = 'E'
-                            sheet['D'+str(i+52)].fill = PatternFill(start_color='00FFFF00', end_color='00FFFF00', fill_type='solid')
+                            sheet['D'+str(i+52)].fill = PatternFill(start_color='0060B3F7', end_color='0060B3F7', fill_type='solid')
                         elif(float(result_label[c6]['text']) < self.base_window.qualitative_analysis_1.program_base_value * NUM2_3):
                                 sheet['D'+str(i+52)] = 'P_L'
                                 sheet['D'+str(i+52)].fill = PatternFill(start_color='00FFCCFF', end_color='00FFCCFF', fill_type='solid')
