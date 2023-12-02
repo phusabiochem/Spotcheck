@@ -2617,8 +2617,6 @@ class QualitativeAnalysisFrame3(Frame):
                 na_copy_text_label.grid(row=4, column=1, padx=20, pady=10)
 
             
-
-
             # images tab
             img_labelframe_1 = LabelFrame(image_tab,
                                         bg="black",
@@ -2686,7 +2684,8 @@ class QualitativeAnalysisFrame3(Frame):
                 
                 ftp.quit()
                 
-                wb = load_workbook(working_dir + '/template.xlsm', keep_vba = True)
+                #wb = load_workbook(working_dir + '/template.xlsm', keep_vba = True)
+                wb = load_workbook(self.base_window.qualitative_analysis_2.id_file_path, keep_vba = True)
                 sheet = wb.active
             else:
                 wb = Workbook()
@@ -3532,7 +3531,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
                 
                 ftp.quit()
                 
-                wb = load_workbook(working_dir + '/template.xlsm', keep_vba = True)
+                #wb = load_workbook(working_dir + '/template.xlsm', keep_vba = True)
+                wb = load_workbook(self.base_window.quantitative_analysis_2.id_file_path, keep_vba = True)
                 sheet = wb.active
             else:
                 wb = Workbook()
@@ -4032,6 +4032,7 @@ class QualitativeAnalysisFrame2(Frame):
     def load_clicked(self):
         self.server_check()
         path = filedialog.askopenfilename(initialdir=id_path, filetypes=[('Excel file','*.xlsm *.xlsx *.xls')])
+        self.id_file_path = path
         if path is not None:
             try:
                 wb = load_workbook(path)
