@@ -40,8 +40,12 @@ import socket
 import board
 import adafruit_ds1307
 import time
+import RPi.GPIO as GPIO
 ################################### IMPORT MODULES - END ########################################
-
+BLUELIGHT_PIN = 26
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(BLUELIGHT_PIN, GPIO.OUT, initial=GPIO.LOW)
 #################################### GUI RULES - START #########################################
 APP_BGD_COLOR = "white smoke"
 
@@ -839,6 +843,8 @@ class SystemCheckFrame(Frame):
 			bled_ready = 1
 
 		if(bled_ready):
+			GPIO.output(BLUELIGHT_PIN, GPIO.HIGH)
+			
 			self.progressbar['value']=45
 			self.base_window.update_idletasks()
 			print("self.mode_check: ", self.mode_check)
@@ -871,6 +877,8 @@ class SystemCheckFrame(Frame):
 			self.progressbar['value']=95
 			self.base_window.update_idletasks()
 			sleep(0.5)
+			
+			GPIO.output(BLUELIGHT_PIN, GPIO.LOW)
 
 			wb = Workbook()
 			sheet = wb.active
@@ -2508,6 +2516,8 @@ class QualitativeAnalysisFrame3(Frame):
 			bled_ready = 1
 		
 		if(bled_ready):
+			GPIO.output(BLUELIGHT_PIN, GPIO.HIGH)
+			
 			self.progressbar['value']=45
 			self.base_window.update_idletasks()
 			try:
@@ -2529,6 +2539,8 @@ class QualitativeAnalysisFrame3(Frame):
 			self.progressbar['value']=80
 			self.base_window.update_idletasks()
 			sleep(0.5)
+			
+			GPIO.output(BLUELIGHT_PIN, GPIO.LOW)
 
 			sum_value = 0
 			active_well_number = 0
@@ -2575,6 +2587,8 @@ class QualitativeAnalysisFrame3(Frame):
 			self.progressbar['value']=100
 			self.base_window.update_idletasks()
 			sleep(0.5)
+			
+			
 
 			self.progressbar.destroy()
 			self.process_label.destroy()
@@ -4105,6 +4119,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			bled_ready = 1
 
 		if(bled_ready):
+			GPIO.output(BLUELIGHT_PIN, GPIO.HIGH)
+			
 			self.progressbar['value']=45
 			self.base_window.update_idletasks()
 			try:
@@ -4134,6 +4150,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.progressbar['value']=80
 			self.base_window.update_idletasks() 
 			sleep(0.5)
+			
+			GPIO.output(BLUELIGHT_PIN, GPIO.LOW)
 
 			cv2.imwrite(self.base_window.quantitative_analysis_0.analysis_result_folder + '/process.jpg', self.image)
 
