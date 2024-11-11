@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 ################################### IMPORT MODULES - START ########################################
 from tkinter import *
 from tkinter import messagebox
@@ -42,10 +41,34 @@ import adafruit_ds1307
 import time
 import RPi.GPIO as GPIO
 ################################### IMPORT MODULES - END ########################################
+################################### CHECK APP INSTANCE - START #############################################
+if not os.path.exists('/home/pi/Spotcheck/.instance.txt'):
+	fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'x')
+	fw_instance.writelines('0\n')
+	number_of_instance = 0
+	fw_instance.close()
+else:
+	fr_instance = open('/home/pi/Spotcheck/.instance.txt')
+	number_of_instance = int(fr_instance.readline().strip('\n'))
+	fr_instance.close()
+	
+print("number_of_instance",number_of_instance)
+
+if(number_of_instance == 0):
+	fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
+	fw_instance.writelines('1\n')
+	fw_instance.close()
+	number_of_instance = 1
+else:
+	os._exit(0)
+
+#################################### CHECK APP INSTANCE - END #############################################
+##################################### GPIO INIT - START ###################################
 BLUELIGHT_PIN = 26
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BLUELIGHT_PIN, GPIO.OUT, initial=GPIO.LOW)
+###################################### GPIO INIT - END ####################################
 #################################### GUI RULES - START #########################################
 APP_BGD_COLOR = "white smoke"
 
@@ -858,6 +881,12 @@ class SystemCheckFrame(Frame):
 										ERROR_LIST(ERROR_LIST['CAMERA_ERROR'].value).name,
 										icon = "error")
 				if(msg=='ok'):
+					global number_of_instance
+					number_of_instance = 0
+					fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
+					fw_instance.writelines('0\n')
+					fw_instance.close()
+					os._exit(0)
 					self.base_window.destroy()
 
 			if(self.mode_check==0):
@@ -1002,6 +1031,11 @@ class SystemCheckFrame(Frame):
 					self.base_window.update_idletasks()
 					self.base_window.system_check.serial_handle()
 				else:
+					number_of_instance = 0
+					fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
+					fw_instance.writelines('0\n')
+					fw_instance.close()
+					os._exit(0)
 					self.base_window.destroy()
 			else:
 				# ~ msg = messagebox.showinfo("", "Finished checking !")
@@ -8709,6 +8743,7 @@ class MainMenu(Frame):
 	def exit_clicked(self):
 		msg = messagebox.askquestion("","Do you want to close the app ?")
 		if(msg == "yes"):
+			os._exit(0)
 			self.base_window.destroy()
 
 	def reset(self):
@@ -8881,6 +8916,12 @@ class MainWindow(Tk):
 			self.trial_30days_extend()
 		else:
 			self.trial_7days()
+			
+		global number_of_instance
+		number_of_instance = 0
+		fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'x')
+		fw_instance.writelines('0\n')
+		
 			
 	def forget_page(self):
 		self.frame_list[self.page_num].forget()
