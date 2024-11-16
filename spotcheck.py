@@ -3389,7 +3389,7 @@ class QualitativeAnalysisFrame3(Frame):
 						elif(self.concen_result_list[index] < 100):
 							self.result_label[index]['bg'] = LOW_COPY_COLOR
 							self.result_label[index]['text'] = '< 100'
-						elif(self.concen_result_list[i] <= 1000):
+						elif(self.concen_result_list[index] <= 1000):
 							self.result_label[index]['bg'] = LOW_COPY_COLOR
 							self.result_label[index]['text'] = "100 - 1000"
 						elif(self.concen_result_list[index] <= 5000):
@@ -4253,7 +4253,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 
 			# ~ Pmw.initialise(self.base_window)
 			# ~ self.tooltip = list(range(SC_VERSION))
-
+			
 			result_label = list(range(SC_VERSION))
 			index = 0 
 			for r in range(0, WELL_ROW):
@@ -4271,13 +4271,13 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
 							result_label[index]['bg'] = NEGATIVE_COLOR
 							result_label[index]['text'] = '0'
-						elif(self.concen_result_list[i] < 100):
+						elif(self.concen_result_list[index] < 100):
 							result_label[index]['bg'] = LOW_COPY_COLOR
 							result_label[index]['text'] = '< 100'
-						elif(self.concen_result_list[i] <= 1000):
+						elif(self.concen_result_list[index] <= 1000):
 							result_label[index]['bg'] = LOW_COPY_COLOR
 							result_label[index]['text'] = "100 - 1000"
-						elif(self.concen_result_list[i] <= 5000):
+						elif(self.concen_result_list[index] <= 5000):
 							result_label[index]['bg'] = LOW_COPY_COLOR
 							result_label[index]['text'] = "1001 - 5000"
 						else:
@@ -8919,7 +8919,7 @@ class MainWindow(Tk):
 			
 		global number_of_instance
 		number_of_instance = 0
-		fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'x')
+		fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
 		fw_instance.writelines('0\n')
 		
 			
