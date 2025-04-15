@@ -1,0 +1,2 @@
+Start Point: (-12, -12)
+End Point: (1036, 612)
