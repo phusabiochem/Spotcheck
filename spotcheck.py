@@ -932,7 +932,7 @@ class Process_Image():
 			pts = np.where(cimg == 255)
 			list_bgrvalue.append(blur1_img[pts[0], pts[1]])
 			for j in range(len(list_bgrvalue[i])):
-				 list_index[i].append(round((list_bgrvalue[i][j][1]*3 + list_bgrvalue[i][j][2])))
+				list_index[i].append(round((list_bgrvalue[i][j][1]*3 + list_bgrvalue[i][j][2])))
 			list_index[i].sort()
 			list_intensities.append(sum(list_index[i][len(list_index[i])-250:]))
 			area[i]= cv2.contourArea(sorted_contours1[i])
@@ -3279,7 +3279,7 @@ class QualitativeAnalysisFrame3(Frame):
 							sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
 							sheet['B'+str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
-					   
+					
 					sheet['E'+str(i + RESULT_CELL_START + WELL_ROW*3)].protection = Protection(locked=False, hidden=False)
 					sheet['F'+str(i + RESULT_CELL_START + WELL_ROW*3)].protection = Protection(locked=False, hidden=False)
 					
@@ -3415,7 +3415,7 @@ class QualitativeAnalysisFrame3(Frame):
 							sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
 							sheet['B'+str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
-					   
+					
 					sheet['E'+str(i + RESULT_CELL_START + WELL_ROW*3)].protection = Protection(locked=False, hidden=False)
 					sheet['F'+str(i + RESULT_CELL_START + WELL_ROW*3)].protection = Protection(locked=False, hidden=False)
 
@@ -4730,14 +4730,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 
 			# sheet.merge_cells(start_row=RESULT_CELL_START+52, start_column=5, end_row=RESULT_CELL_START+52, end_column=7)
 			# sheet.merge_cells(start_row=RESULT_CELL_START+53, start_column=5, end_row=RESULT_CELL_START+53, end_column=7)
-			sheet['B' + str(RESULT_CELL_START+51)] = Quantitative3_Language["Result TechnicianNameSign Text"][language]
-			sheet['B' + str(RESULT_CELL_START+52)] = ''
-			sheet['E' + str(RESULT_CELL_START+51)] = Quantitative3_Language["Result HeadOfDivisionSign Text"][language]
-			sheet['E' + str(RESULT_CELL_START+52)] = ''
-			sheet["B" + str(RESULT_CELL_START+51)].font = font2
-			sheet["E" + str(RESULT_CELL_START+51)].font = font2
-			sheet["B" + str(RESULT_CELL_START+51)].protection = Protection(locked=False, hidden=False)
-			sheet["E" + str(RESULT_CELL_START+51)].protection = Protection(locked=False, hidden=False)
+			
 			# sheet.cell(row=RESULT_CELL_START+52,column=2).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			# sheet.cell(row=RESULT_CELL_START+53,column=2).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			# sheet.cell(row=RESULT_CELL_START+52,column=5).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
@@ -5062,6 +5055,12 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			# Chu ky 
 			sheet.merge_cells(start_row=tmp_row_value + 4, start_column=5, end_row=tmp_row_value + 4, end_column=7)
 			sheet.merge_cells(start_row=tmp_row_value + 5, start_column=5, end_row=tmp_row_value + 5, end_column=7)
+			sheet['B' + str(tmp_row_value + 4)] = Quantitative3_Language["Result TechnicianNameSign Text"][language]
+			sheet['E' + str(tmp_row_value + 4)] = Quantitative3_Language["Result HeadOfDivisionSign Text"][language]
+			sheet["B" + str(tmp_row_value + 4)].font = font2
+			sheet["E" + str(tmp_row_value + 4)].font = font2
+			sheet["B" + str(tmp_row_value + 4)].protection = Protection(locked=False, hidden=False)
+			sheet["E" + str(tmp_row_value + 4)].protection = Protection(locked=False, hidden=False)
 			sheet.cell(row=tmp_row_value + 4,column=2).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			sheet.cell(row=tmp_row_value + 5,column=2).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			sheet.cell(row=tmp_row_value + 4,column=5).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
@@ -5250,31 +5249,31 @@ class QualitativeAnalysisFrame2(Frame):
 		self.id_pos_frame.grid(row=0, column=1, padx=50)
 
 		self.id_file_name_label = Label(self.id_load_frame,
-								   bg = LABEL_BGD_COLOR,
-								   fg = LABEL_TXT_COLOR,
-								   font = ('Helvetica', 13))
+								bg = LABEL_BGD_COLOR,
+								fg = LABEL_TXT_COLOR,
+								font = ('Helvetica', 13))
 		self.id_file_name_label.pack(expand=TRUE, fill=BOTH, pady=10, padx=10)
 
 		self.load_button = Button(self.id_load_frame,
-								  text = Screening2_Language["Load Button"][language],
-								  bg = MAIN_FUNCTION_BUTTON_BGD_COLOR,
-								  fg = MAIN_FUNCTION_BUTTON_TXT_COLOR,
-								  font = MAIN_FUCNTION_BUTTON_FONT,
-								  width = 15,
-								  height = 3,
-								  borderwidth = 0,
-								  command = self.load_clicked)
+								text = Screening2_Language["Load Button"][language],
+								bg = MAIN_FUNCTION_BUTTON_BGD_COLOR,
+								fg = MAIN_FUNCTION_BUTTON_TXT_COLOR,
+								font = MAIN_FUCNTION_BUTTON_FONT,
+								width = 15,
+								height = 3,
+								borderwidth = 0,
+								command = self.load_clicked)
 		self.load_button.pack(expand=TRUE, side=LEFT)
 
 		self.create_button = Button(self.id_load_frame,
-								  text = Screening2_Language["Create Button"][language],
-								  bg = MAIN_FUNCTION_BUTTON_BGD_COLOR,
-								  fg = MAIN_FUNCTION_BUTTON_TXT_COLOR,
-								  font = MAIN_FUCNTION_BUTTON_FONT,
-								  width = 15,
-								  height = 3,
-								  borderwidth = 0,
-								  command = self.create_clicked)
+								text = Screening2_Language["Create Button"][language],
+								bg = MAIN_FUNCTION_BUTTON_BGD_COLOR,
+								fg = MAIN_FUNCTION_BUTTON_TXT_COLOR,
+								font = MAIN_FUCNTION_BUTTON_FONT,
+								width = 15,
+								height = 3,
+								borderwidth = 0,
+								command = self.create_clicked)
 		self.create_button.pack(expand=TRUE, side=RIGHT)
 
 
@@ -5314,7 +5313,7 @@ class QualitativeAnalysisFrame2(Frame):
 
 	def next_clicked(self):
 		try:
-			 self.email_label_frame.place_forget()
+			self.email_label_frame.place_forget()
 		except:
 			pass
 
@@ -5602,7 +5601,7 @@ class QuantitativeAnalysisFrame2(QualitativeAnalysisFrame2):
 
 	def next_clicked(self):
 		try:
-			 self.email_label_frame.place_forget()
+			self.email_label_frame.place_forget()
 		except:
 			pass
 
@@ -6321,7 +6320,7 @@ class QualitativeAnalysisFrame0(Frame):
 			os.mkdir(self.result_folder_path_0)
 		else:
 			self.result_folder_path_0 = results_qualitative_path +  self.result_folder_name_0
-			 
+			
 		if(self.experiment_name != ''):
 			self.result_folder_name = self.experiment_name
 		else:
@@ -6411,7 +6410,7 @@ class QuantitativeAnalysisFrame0(QualitativeAnalysisFrame0):
 			os.mkdir(self.result_folder_path_0)
 		else:
 			self.result_folder_path_0 = results_quantitative_path +  self.result_folder_name_0
-			 
+			
 		if(self.experiment_name != ''):
 			self.result_folder_name = self.experiment_name
 		else:
@@ -6590,7 +6589,7 @@ class IDCreateFrame(Frame):
 						fg = LABEL_TXT_COLOR,
 						font = SAMPLE_LABEL_TXT_FONT)
 		self.last_well_label.grid(row=1, column=1)
-	   
+	
 		self.quick_create_button = Button(self.qc2_frame,
 								text = CreateFile_Language["Set Button"][language],
 								font = SWITCH_PAGE_BUTTON_FONT,
@@ -7260,7 +7259,7 @@ class IDCreateFrame(Frame):
 						fg = LABEL_TXT_COLOR,
 						font = SAMPLE_LABEL_TXT_FONT)
 		self.last_well_label.grid(row=1, column=1)
-	   
+	
 		self.quick_create_button = Button(self.qc2_frame,
 								text = "Set",
 								font = SWITCH_PAGE_BUTTON_FONT,
@@ -8415,9 +8414,9 @@ class QuantitativeCalibListFrame(Frame):
 		self.base_window.new_quantitative_1.properties_text.delete('1.0',END)
 		
 		# ~ create_kit_frame = Frame(self.work_frame,
-								 # ~ width = 200,
-								 # ~ height = 300,
-								 # ~ bg = 'grey80')
+								# ~ width = 200,
+								# ~ height = 300,
+								# ~ bg = 'grey80')
 		# ~ create_kit_frame.place(x=400, y=30)
 		try: 
 			self.info_labelframe.grid_forget()
@@ -10030,7 +10029,7 @@ class MainWindow(Tk):
 			self.update_idletasks()
 		else:
 			self.system_check_light()
-			 
+			
 ############################################### GUI DESIGN _ END #################################################
 if __name__ == "__main__":
 	app = MainWindow()
