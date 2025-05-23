@@ -5674,6 +5674,13 @@ class QuantitativeAnalysisFrame2(QualitativeAnalysisFrame2):
 			# ~ if (match == None):
 				# ~ messagebox.showerror("","Email syntax error")
 			# ~ else:
+			global autofill_email
+			autofill_email = addressToVerify
+			fw_info = open('/home/pi/Spotcheck/.oldinfo.txt', 'w')
+			fw_info.writelines(addressToVerify + '\n')
+			fw_info.writelines(autofill_user + '\n')
+			fw_info.close()
+			
 			self.recipient_email = addressToVerify
 			self.automail_is_on = 1
 			self.base_window.forget_page()
