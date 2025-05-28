@@ -467,7 +467,9 @@ rtc = adafruit_ds1307.DS1307(i2c)
 
 
 #######################################################
-QUANTITATIVE_THRESHOLES = [0, 100, 500, 5000, 50000]
+QUANTITATIVE_THRESHOLES = [100, 500, 1000, 10000, 100000, 999999]
+QUANTITATIVE_COPY_RANGE = ['1-100', '101-500', '501-1000', '1001-10000', '10001-100000', '>100000']
+QUANTITATIVE_CT_RANGE = ['>37', '33-37', '30-32', '27-29', '24-26', '<24']
 #######################################################
 
 
@@ -4488,6 +4490,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 					self.y_result_list[i] = self.result[i]/self.base_window.system_check.threshold
 					self.x_result_list[i] = (self.y_result_list[i] - self.base_window.quantitative_analysis_1.b_value)/self.base_window.quantitative_analysis_1.a_value
 					self.concen_result_list[i] = round(10**self.x_result_list[i])
+					if(self.concen_result_list[i] > 999999):
+						self.concen_result_list[i] = 999999
 					# ~ self.concen_result_list[i] = round((1 + (self.x_result_list[i] - round(self.x_result_list[i])))*(10**round(self.x_result_list[i])))
 					# ~ self.concen_result_list[i] = self.x_result_list[i]
 			self.progressbar['value']=80
@@ -4580,21 +4584,24 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
 							result_label[index]['bg'] = NEGATIVE_COLOR
 							result_label[index]['text'] = '0'
-						elif(self.concen_result_list[index] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[1]):
+						elif(self.concen_result_list[index] > 0 and self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[0]):
 							result_label[index]['bg'] = LOW_COPY_COLOR
-							result_label[index]['text'] = self.concen_result_list[index]
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[0]
+						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[1]):
+							result_label[index]['bg'] = LOW_COPY_COLOR
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[1]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[2]):
 							result_label[index]['bg'] = LOW_COPY_COLOR
-							result_label[index]['text'] = self.concen_result_list[index]
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[2]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[3]):
 							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = self.concen_result_list[index]
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[3]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[4]):
 							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = self.concen_result_list[index]
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[4]
 						else:
 							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = self.concen_result_list[index]
+							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[5]
 					else:
 						result_label[index]['text'] = "N/A"
 						result_label[index]['bg'] = NA_COLOR
@@ -4606,34 +4613,38 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.annotate_result_frame.grid(row=0, column=1, padx=12)
 			
 			value_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note Value Label"][language], height=2)
-			value_text_label.grid(row=0, column=0, padx=5, pady=8)
+			value_text_label.grid(row=0, column=0, padx=5, pady=6)
 			ct_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note CT Label"][language], height=2)
-			ct_text_label.grid(row=0, column=1, padx=5, pady=8)
+			ct_text_label.grid(row=0, column=1, padx=5, pady=6)
 
 			value0_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=NEGATIVE_COLOR, width=12, text="0", height=2)
-			value0_text_label.grid(row=1, column=0, padx=5, pady=8)
+			value0_text_label.grid(row=1, column=0, padx=3, pady=6)
 			ct0_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=NEGATIVE_COLOR, width=12, text="-", height=2)
-			ct0_text_label.grid(row=1, column=1, padx=5, pady=8)
+			ct0_text_label.grid(row=1, column=1, padx=3, pady=6)
 			value1_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="1-100", height=2)
-			value1_text_label.grid(row=2, column=0, padx=5, pady=8)
-			ct1_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="> 37", height=2)
-			ct1_text_label.grid(row=2, column=1, padx=5, pady=8)
+			value1_text_label.grid(row=2, column=0, padx=3, pady=6)
+			ct1_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text=">37", height=2)
+			ct1_text_label.grid(row=2, column=1, padx=3, pady=6)
 			value2_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="101-500", height=2)
-			value2_text_label.grid(row=3, column=0, padx=5, pady=8)
+			value2_text_label.grid(row=3, column=0, padx=3, pady=6)
 			ct2_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="33-37", height=2)
-			ct2_text_label.grid(row=3, column=1, padx=5, pady=8)
-			value3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="501-5000", height=2)
-			value3_text_label.grid(row=4, column=0, padx=5, pady=8)
-			ct3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="29-32", height=2)
-			ct3_text_label.grid(row=4, column=1, padx=5, pady=8)
-			value4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="5001-50000", height=2)
-			value4_text_label.grid(row=5, column=0, padx=5, pady=8)
-			ct4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="26-28", height=2)
-			ct4_text_label.grid(row=5, column=1, padx=5, pady=8)
-			value5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="> 50000", height=2)
-			value5_text_label.grid(row=6, column=0, padx=5, pady=8)
-			ct5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="< 26", height=2)
-			ct5_text_label.grid(row=6, column=1, padx=5, pady=8)
+			ct2_text_label.grid(row=3, column=1, padx=3, pady=6)
+			value3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="501-1000", height=2)
+			value3_text_label.grid(row=4, column=0, padx=3, pady=6)
+			ct3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="30-32", height=2)
+			ct3_text_label.grid(row=4, column=1, padx=3, pady=6)
+			value4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="1001-10000", height=2)
+			value4_text_label.grid(row=5, column=0, padx=3, pady=6)
+			ct4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="27-29", height=2)
+			ct4_text_label.grid(row=5, column=1, padx=3, pady=6)
+			value5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="10001-100000", height=2)
+			value5_text_label.grid(row=6, column=0, padx=3, pady=6)
+			ct5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="24-26", height=2)
+			ct5_text_label.grid(row=6, column=1, padx=3, pady=6)
+			value6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text=">100000", height=2)
+			value6_text_label.grid(row=7, column=0, padx=3, pady=6)
+			ct6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="<24", height=2)
+			ct6_text_label.grid(row=7, column=1, padx=3, pady=6)
 
 			
 			#Image Tab
@@ -4809,31 +4820,67 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 					else:
-						if(self.concen_result_list[c1] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[1]):
-							sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
-							sheet['E'+ str(i + RESULT_CELL_START)] = '> 37'
+						if(self.concen_result_list[c1] > 0 and self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[0]):
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[0]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[0]
+							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[1]):
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[1]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[1]
 							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[2]):
-							sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
-							sheet['E'+ str(i + RESULT_CELL_START)] = '33-37'
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[2]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[2]
 							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[3]):
-							sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
-							sheet['E'+ str(i + RESULT_CELL_START)] = '29-32'
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[3]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[3]
 							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[4]):
-							sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
-							sheet['E'+ str(i + RESULT_CELL_START)] = '26-28'
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[4]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[4]
+							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[5]):
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[5]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[5]
 							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						else:
-							sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
-							sheet['E'+ str(i + RESULT_CELL_START)] = '< 26'
+							sheet['D'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_COPY_RANGE[6]
+							sheet['E'+ str(i + RESULT_CELL_START)] = QUANTITATIVE_CT_RANGE[6]
 							sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+						# if(self.concen_result_list[c1] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[1]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
+						# 	sheet['E'+ str(i + RESULT_CELL_START)] = '> 37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[2]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
+						# 	sheet['E'+ str(i + RESULT_CELL_START)] = '33-37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[3]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
+						# 	sheet['E'+ str(i + RESULT_CELL_START)] = '29-32'
+						# 	sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# elif(self.concen_result_list[c1] <= QUANTITATIVE_THRESHOLES[4]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
+						# 	sheet['E'+ str(i + RESULT_CELL_START)] = '26-28'
+						# 	sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# else:
+						# 	sheet['D'+ str(i + RESULT_CELL_START)] = str(self.concen_result_list[c1])
+						# 	sheet['E'+ str(i + RESULT_CELL_START)] = '< 26'
+						# 	sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 						sheet['D'+ str(i + RESULT_CELL_START)].font = font2
 						sheet['B'+ str(i + RESULT_CELL_START)].font = font2
@@ -4850,31 +4897,68 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 					else:
-						if(self.concen_result_list[c2] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[1]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '> 37'
+						if(self.concen_result_list[c2] > 0 and self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[0]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[0]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[0]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[1]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[1]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[1]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[2]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '33-37'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[2]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[2]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[3]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '29-32'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[3]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[3]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[4]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '26-28'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[4]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[4]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[5]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[5]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[5]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						else:
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '< 26'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_COPY_RANGE[6]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = QUANTITATIVE_CT_RANGE[6]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+
+						# if(self.concen_result_list[c2] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[1]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '> 37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[2]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '33-37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[3]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '29-32'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# elif(self.concen_result_list[c2] <= QUANTITATIVE_THRESHOLES[4]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '26-28'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# else:
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = str(self.concen_result_list[c2])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '< 26'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].font = font2
 						sheet['B'+ str(i + RESULT_CELL_START + WELL_ROW)].font = font2
@@ -4891,31 +4975,67 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						sheet['E'+str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 					else:
-						if(self.concen_result_list[c3] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[1]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '> 37'
+						if(self.concen_result_list[c3] > 0 and self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[0]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[0]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[0]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[1]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[1]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[1]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[2]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '33-37'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[2]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[2]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[3]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '29-32'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[3]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[3]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[4]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '26-28'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[4]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[4]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[5]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[5]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[5]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						else:
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '< 26'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_COPY_RANGE[6]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = QUANTITATIVE_CT_RANGE[6]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+						# if(self.concen_result_list[c3] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[1]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '> 37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[2]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '33-37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[3]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '29-32'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# elif(self.concen_result_list[c3] <= QUANTITATIVE_THRESHOLES[4]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '26-28'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# else:
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = str(self.concen_result_list[c3])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)] = '< 26'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*2)].font = font2
 						sheet['B'+ str(i + RESULT_CELL_START + WELL_ROW*2)].font = font2
@@ -4932,31 +5052,71 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 					else:
-						if(self.concen_result_list[c4] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[1]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '> 37'
+						if(self.concen_result_list[c4] > 0 and self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[0]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[0]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[0]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[1]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[1]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[1]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[2]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '33-37'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[2]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[2]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 						elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[3]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '29-32'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[3]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[3]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[4]):
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '26-28'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[4]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[4]
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[5]):
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[5]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[5]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 						else:
-							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
-							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '< 26'
+							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_COPY_RANGE[6]
+							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = QUANTITATIVE_CT_RANGE[6]
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+
+
+
+
+						# if(self.concen_result_list[c4] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[1]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '> 37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[2]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '33-37'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+						# elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[3]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '29-32'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# elif(self.concen_result_list[c4] <= QUANTITATIVE_THRESHOLES[4]):
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '26-28'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# else:
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = str(self.concen_result_list[c4])
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '< 26'
+						# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+						# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
 						sheet['B'+ str(i + RESULT_CELL_START + WELL_ROW*3)].font = font2
@@ -4974,31 +5134,67 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						else:
-							if(self.concen_result_list[c5] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[1]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '> 37'
+							if(self.concen_result_list[c5] > 0 and self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[0]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[0]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[0]
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[1]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[1]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[1]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[2]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '33-37'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[2]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[2]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[3]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '29-32'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[3]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[3]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[4]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '26-28'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[4]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[4]
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[5]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[5]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[5]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							else:
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '< 26'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_COPY_RANGE[6]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = QUANTITATIVE_CT_RANGE[6]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+							# if(self.concen_result_list[c5] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[1]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '> 37'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[2]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '33-37'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[3]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '29-32'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# elif(self.concen_result_list[c5] <= QUANTITATIVE_THRESHOLES[4]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '26-28'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# else:
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = str(self.concen_result_list[c5])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '< 26'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].font = font2
 							sheet['B'+ str(i + RESULT_CELL_START + WELL_ROW*4)].font = font2
@@ -5015,35 +5211,73 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
 						else:
-							if(self.concen_result_list[c6] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[1]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '> 37'
+							if(self.concen_result_list[c6] > 0 and self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[0]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[0]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[0]
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[1]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[1]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[1]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[2]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '33-37'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[2]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[2]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
 							elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[3]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '29-32'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[3]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[3]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[4]):
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '26-28'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[4]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[4]
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[5]):
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[5]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[5]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 							else:
-								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
-								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '< 26'
+								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_COPY_RANGE[6]
+								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = QUANTITATIVE_CT_RANGE[6]
 								sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 								sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+
+
+							# if(self.concen_result_list[c6] > QUANTITATIVE_THRESHOLES[0] and self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[1]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '> 37'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[2]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '33-37'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF9999', end_color='00FF9999', fill_type='solid')
+							# elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[3]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '29-32'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# elif(self.concen_result_list[c6] <= QUANTITATIVE_THRESHOLES[4]):
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '26-28'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# else:
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = str(self.concen_result_list[c6])
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '< 26'
+							# 	sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
+							# 	sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='00FF0000', end_color='00FF0000', fill_type='solid')
 
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].font = font2
 							sheet['B'+ str(i + RESULT_CELL_START + WELL_ROW*5)].font = font2
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)].font = font2
+
 
 			############## Cat bo vi tri N/A ###############
 			first_result_row = RESULT_CELL_START
