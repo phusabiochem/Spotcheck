@@ -54,13 +54,13 @@ else:
 	
 print("number_of_instance",number_of_instance)
 
-if(number_of_instance == 0):
-	fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
-	fw_instance.writelines('1\n')
-	fw_instance.close()
-	number_of_instance = 1
-else:
-	os._exit(0)
+# if(number_of_instance == 0):
+# 	fw_instance = open('/home/pi/Spotcheck/.instance.txt', 'w')
+# 	fw_instance.writelines('1\n')
+# 	fw_instance.close()
+# 	number_of_instance = 1
+# else:
+# 	os._exit(0)
 
 #################################### CHECK APP INSTANCE - END #############################################
 ##################################### GPIO INIT - START ###################################
@@ -168,6 +168,7 @@ MainScreen_Language = {
 	"Exit Button": ["Exit", "Thoát"],
 	"Screening LabelFrame": ["Screening Mode", "Định tính"],
 	"Quantitative LabelFrame": ["Quantitative Mode", "Định lượng"],
+	"Admin Button": ["Admin", "Admin"],
 
 	##### Messagebox #####
 	"Exit Confirm": ["Do you want to close the app ?","Bạn có muốn đóng ứng dụng ?"],
@@ -3067,9 +3068,9 @@ class QualitativeAnalysisFrame3(Frame):
 			self.thr2_radio_button = Radiobutton(self.button_frame, text = Screening3_Language["Host RadioButton"][language],  width=12, variable = self.thr_value, value=1, command=self.thr_choose)
 			self.quantitative_radio_button = Radiobutton(self.button_frame, text = Screening3_Language["Quantitative RadioButton"][language], width=12, variable = self.thr_value, value=2, command=self.quantitative_switch)
 
-			self.thr1_radio_button.pack(ipady=10, side=LEFT)
-			self.thr2_radio_button.pack(ipady=10, side=LEFT)
-			self.quantitative_radio_button.pack(ipady=10, side=LEFT)
+			# self.thr1_radio_button.pack(ipady=10, side=LEFT)
+			# self.thr2_radio_button.pack(ipady=10, side=LEFT)
+			# self.quantitative_radio_button.pack(ipady=10, side=LEFT)
 			
 			if(self.base_window.main_menu.threshold_value == 0):
 				self.thr_value.set(0)
@@ -3474,8 +3475,7 @@ class QualitativeAnalysisFrame3(Frame):
 						sheet['F'+str(i + RESULT_CELL_START + WELL_ROW*5)].protection = Protection(locked=False, hidden=False)
 			sheet.print_area = 'A1:G70'
 			wb.save(self.base_window.qualitative_analysis_0.result_folder_path +  '/' + self.base_window.qualitative_analysis_0.experiment_name + '.xlsx')
-						\
-						\
+
 			# Report tab
 			self.report_frame = ScrollableFrame2(self.report_tab)
 			self.report_frame.pack(ipady=5, ipadx=5)
@@ -9506,6 +9506,20 @@ class MainMenu(Frame):
 									command = self.quantitative_clicked)
 		self.quantitative_button.grid(row=0, column=1, ipadx=20, ipady=10, padx=100, pady=130)
 
+		if os.path.exists('/home/pi/Spotcheck/admin.txt'):
+			self.admin_button = Button(self.button_frame,
+										text = MainScreen_Language["Admin Button"][language],
+										font = MAIN_MENU_BUTTON_FONT,
+										bg = MAIN_MENU_BUTTON_BGD_COLOR,
+										fg = MAIN_MENU_BUTTON_TXT_COLOR,
+										# ~ width = 16,
+										# ~ height = 2,
+										borderwidth = 0,
+										command = self.admin_clicked)
+			self.admin_button.pack(side=LEFT, fill=BOTH, expand=TRUE, ipady=5)
+
+
+
 		self.view_result_button = Button(self.button_frame,
 									text = MainScreen_Language["ViewResult Button"][language],
 									font = MAIN_MENU_BUTTON_FONT,
@@ -9690,6 +9704,48 @@ class MainMenu(Frame):
 
 		### System Check ###
 		self.base_window.system_check.title_label['text'] = SystemCheck_Language["Title Label"][language]
+
+	def admin_clicked(self):
+		self.threshold_label_frame = LabelFrame(self.work_frame,
+											# ~ width = 600,
+											# ~ height = 300,
+											text = MainScreen_Language['Screening LabelFrame'][language],
+											bg = 'grey70')
+		self.threshold_label_frame.place(x=65, y=75)
+
+		self.thr1_button = Button(self.threshold_label_frame,
+					text = MainScreen_Language['Environment Button'][language],
+					font = SWITCH_PAGE_BUTTON_FONT,
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					command = self.thr1_clicked)
+		self.thr1_button.pack(side=LEFT, padx=100, pady=80, ipady=10, ipadx=2)
+
+		self.thr2_button = Button(self.threshold_label_frame,
+					text = MainScreen_Language['Host Button'][language],
+					font = SWITCH_PAGE_BUTTON_FONT,
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					command = self.thr2_clicked)
+		self.thr2_button.pack(side=LEFT, padx=100, pady=80, ipady=10, ipadx=21)
+		
+		self.cancel_button = Button(self.threshold_label_frame,
+					text = "X",
+					font = SWITCH_PAGE_BUTTON_FONT,
+					width = 1,
+					height = 1,
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					command = self.cancel_clicked)
+		self.cancel_button.place(x=586,y=-18)
+		
+		# self.quantitative_button['state'] = 'disabled'
+		self.view_result_button['state'] = 'disabled'
+		self.create_file_button['state'] = 'disabled'
+		self.connect_button['state'] = 'disabled'
 
 	def screening_clicked(self):		
 		self.analysis_clicked()
