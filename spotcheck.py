@@ -348,6 +348,7 @@ Quantitative3_Language = {
 	"Result Tab": ["Result", "Kết quả"],
 	"Report Tab": ["Report", "Báo cáo"],
 	"Images Tab": ["Images", "Hình ảnh"],
+	"Screening Tab": ["Screening", "Định tính"],
 
 	"Note Value Label": ["Value", "Giá trị"],
 	"Note CT Label": ["CT", "CT"],
@@ -4551,18 +4552,30 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.progressbar.destroy()
 			self.process_label.destroy()
 
-			tab_control = ttk.Notebook(self.work_frame)
-			result_tab = Frame(tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			report_tab = Frame(tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			image_tab = Frame(tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.tab_control = ttk.Notebook(self.work_frame)
+			self.result_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.screening_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.report_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.image_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 
-			tab_control.add(result_tab, text = Quantitative3_Language["Result Tab"][language])
-			tab_control.add(report_tab, text = Quantitative3_Language["Report Tab"][language])
-			tab_control.add(image_tab, text = Quantitative3_Language["Images Tab"][language])
-			tab_control.grid(row=0, column=0, padx=0, pady=1, sticky=EW)
+			self.result_tab.rowconfigure(0, weight=1)
+			self.result_tab.columnconfigure(0, weight=4)
+			self.result_tab.columnconfigure(1, weight=1)
+			self.result_tab.grid_propagate(False)
 
-			self.check_result_frame = Frame(result_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
-			self.check_result_frame.grid(row=0, column=0, padx=20, pady=10)
+			self.screening_tab.rowconfigure(0, weight=1)
+			self.screening_tab.columnconfigure(0, weight=4)
+			self.screening_tab.columnconfigure(1, weight=1)
+			self.screening_tab.grid_propagate(False)
+
+			self.tab_control.add(self.result_tab, text = Quantitative3_Language["Result Tab"][language])
+			self.tab_control.add(self.screening_tab, text = Quantitative3_Language["Screening Tab"][language])
+			self.tab_control.add(self.report_tab, text = Quantitative3_Language["Report Tab"][language])
+			self.tab_control.add(self.image_tab, text = Quantitative3_Language["Images Tab"][language])
+			self.tab_control.grid(row=0, column=0, padx=0, pady=1, sticky=EW)
+
+			self.check_result_frame = Frame(self.result_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
+			self.check_result_frame.grid(row=0, column=0)
 
 			# ~ Pmw.initialise(self.base_window)
 			# ~ self.tooltip = list(range(SC_VERSION))
@@ -4609,8 +4622,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 
 					index += 1
 
-			self.annotate_result_frame = Frame(result_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.annotate_result_frame.grid(row=0, column=1, padx=12)
+			self.annotate_result_frame = Frame(self.result_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.annotate_result_frame.grid(row=0, column=1)
 			
 			value_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note Value Label"][language], height=2)
 			value_text_label.grid(row=0, column=0, padx=5, pady=6)
@@ -4646,16 +4659,63 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			ct6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="<24", height=2)
 			ct6_text_label.grid(row=7, column=1, padx=3, pady=6)
 
+
+			#Screening Tab
+			self.screening_result_frame = Frame(self.screening_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
+			self.screening_result_frame.grid(row=0, column=0)
+
+			self.screening_label = list(range(SC_VERSION))
+			index = 0
+			for r in range(0, WELL_ROW): 
+				for c in range(0, WELL_COLUMN):
+					self.screening_label[index] = Label(self.screening_result_frame,
+											width = 6, 
+											height = 3,
+											font = RESULT_LABEL_TXT_FONT_1)
+					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
+						self.screening_label[index]['text'] = round(self.result[index]/self.base_window.system_check.threshold,2)
+						if(float(self.screening_label[index]['text']) <= self.base_window.main_menu.num1):
+							self.screening_label[index]['bg'] = NEGATIVE_COLOR
+						elif(float(self.screening_label[index]['text']) <= self.base_window.main_menu.num2):
+							self.screening_label[index]['bg'] = LOW_COPY_COLOR
+						else:
+							self.screening_label[index]['bg'] = POSITIVE_COLOR
+					else:
+						self.screening_label[index]['text'] = "N/A"
+						self.screening_label[index]['bg'] = NA_COLOR
+
+					self.screening_label[index].grid(row=r,column=c, padx=1, pady=1)
+					index += 1
+
+			self.annotate_result_frame = Frame(self.screening_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.annotate_result_frame.grid(row=0, column=1)
 			
+			negative_label = Label(self.annotate_result_frame, bg=NEGATIVE_COLOR, width=4, height=2)
+			negative_label.grid(row=0, column=0, padx=30, pady=8)
+			negative_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note Negative Label"][language], height=2)
+			negative_text_label.grid(row=0, column=1, padx=45, pady=8)
+			low_copy_label = Label(self.annotate_result_frame, bg=LOW_COPY_COLOR, width=4, height=2)
+			low_copy_label.grid(row=1, column=0, padx=30, pady=8)
+			low_copy_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note LowCopy Label"][language], height=2)
+			low_copy_text_label.grid(row=1, column=1, padx=45, pady=8)
+			positive_label = Label(self.annotate_result_frame, bg=POSITIVE_COLOR, width=4, height=2)
+			positive_label.grid(row=2, column=0, padx=30, pady=8)
+			positive_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note Positive Label"][language], height=2)
+			positive_text_label.grid(row=2, column=1, padx=45, pady=8)
+			na_label = Label(self.annotate_result_frame, bg=NA_COLOR, width=4, height=2)
+			na_label.grid(row=3, column=0, padx=30, pady=8)
+			na_copy_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note NoSample Label"][language], height=2)
+			na_copy_text_label.grid(row=3, column=1, padx=45, pady=8)
+
 			#Image Tab
-			img_labelframe_1 = LabelFrame(image_tab,
+			img_labelframe_1 = LabelFrame(self.image_tab,
 										bg="black",
 										text=Quantitative3_Language["RawImage LabelFrame"][language],
 										fg="cyan",
 										font = LABELFRAME_TXT_FONT)
 			img_labelframe_1.pack(fill=BOTH, expand=TRUE, side=LEFT)
 
-			img_labelframe_2 = LabelFrame(image_tab,
+			img_labelframe_2 = LabelFrame(self.image_tab,
 										bg="black",
 										text=Quantitative3_Language["AnalyzedImage LabelFrame"][language],
 										fg="cyan",
@@ -5312,7 +5372,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			wb.save(self.base_window.quantitative_analysis_0.result_folder_path + '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
 
 			# Report tab
-			self.report_frame = ScrollableFrame2(report_tab)
+			self.report_frame = ScrollableFrame2(self.report_tab)
 			self.report_frame.pack(pady=5)
 			
 			wb = load_workbook(self.base_window.quantitative_analysis_0.result_folder_path +  '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
@@ -5391,7 +5451,12 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 		sheet.add_image(img)
 		wb.save(self.base_window.quantitative_analysis_0.result_folder_path + '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
 		wb.close()
-		
+
+		self.tab_control.select(self.screening_tab)
+		self.tab_control.update_idletasks()
+		sleep(1)
+		subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/screening.jpg"])
+
 		msg = messagebox.askquestion("",Quantitative3_Language["Finish Question"][language])
 		if(msg=="yes"):
 			self.base_window.forget_page()
@@ -9506,17 +9571,17 @@ class MainMenu(Frame):
 									command = self.quantitative_clicked)
 		self.quantitative_button.grid(row=0, column=1, ipadx=20, ipady=10, padx=100, pady=130)
 
-		if os.path.exists('/home/pi/Spotcheck/admin.txt'):
-			self.admin_button = Button(self.button_frame,
-										text = MainScreen_Language["Admin Button"][language],
-										font = MAIN_MENU_BUTTON_FONT,
-										bg = MAIN_MENU_BUTTON_BGD_COLOR,
-										fg = MAIN_MENU_BUTTON_TXT_COLOR,
-										# ~ width = 16,
-										# ~ height = 2,
-										borderwidth = 0,
-										command = self.admin_clicked)
-			self.admin_button.pack(side=LEFT, fill=BOTH, expand=TRUE, ipady=5)
+		# if os.path.exists('/home/pi/Spotcheck/admin.txt'):
+		# 	self.admin_button = Button(self.button_frame,
+		# 								text = MainScreen_Language["Admin Button"][language],
+		# 								font = MAIN_MENU_BUTTON_FONT,
+		# 								bg = MAIN_MENU_BUTTON_BGD_COLOR,
+		# 								fg = MAIN_MENU_BUTTON_TXT_COLOR,
+		# 								# ~ width = 16,
+		# 								# ~ height = 2,
+		# 								borderwidth = 0,
+		# 								command = self.admin_clicked)
+		# 	self.admin_button.pack(side=LEFT, fill=BOTH, expand=TRUE, ipady=5)
 
 
 
@@ -9969,6 +10034,10 @@ class MainMenu(Frame):
 		self.create_file_button['state'] = 'normal'
 		self.connect_button['state'] = 'normal'
 		# self.language_button['state'] = 'normal'
+
+		fr = open(working_dir + "/multiplier.txt","r")
+		self.num1 = float(fr.readline())
+		self.num2 = float(fr.readline())
 	
 
 		####### SYSTEM CHECK ########
