@@ -4580,11 +4580,11 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			# ~ Pmw.initialise(self.base_window)
 			# ~ self.tooltip = list(range(SC_VERSION))
 			
-			result_label = list(range(SC_VERSION))
+			self.result_label = list(range(SC_VERSION))
 			index = 0 
 			for r in range(0, WELL_ROW):
 				for c in range(0, WELL_COLUMN):
-					result_label[index] = Label(self.check_result_frame,
+					self.result_label[index] = Label(self.check_result_frame,
 										width=15,
 										height=3,
 										# ~ bg = RESULT_LABEL_BGD_COLOR,
@@ -4595,30 +4595,30 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 
 					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
 						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
-							result_label[index]['bg'] = NEGATIVE_COLOR
-							result_label[index]['text'] = '0'
+							self.result_label[index]['bg'] = NEGATIVE_COLOR
+							self.result_label[index]['text'] = '0'
 						elif(self.concen_result_list[index] > 0 and self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[0]):
-							result_label[index]['bg'] = LOW_COPY_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[0]
+							self.result_label[index]['bg'] = LOW_COPY_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[0]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[1]):
-							result_label[index]['bg'] = LOW_COPY_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[1]
+							self.result_label[index]['bg'] = LOW_COPY_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[1]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[2]):
-							result_label[index]['bg'] = LOW_COPY_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[2]
+							self.result_label[index]['bg'] = LOW_COPY_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[2]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[3]):
-							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[3]
+							self.result_label[index]['bg'] = POSITIVE_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[3]
 						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[4]):
-							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[4]
+							self.result_label[index]['bg'] = POSITIVE_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[4]
 						else:
-							result_label[index]['bg'] = POSITIVE_COLOR
-							result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[5]
+							self.result_label[index]['bg'] = POSITIVE_COLOR
+							self.result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[5]
 					else:
-						result_label[index]['text'] = "N/A"
-						result_label[index]['bg'] = NA_COLOR
-					result_label[index].grid(row=r,column=c, padx=1, pady=1)
+						self.result_label[index]['text'] = "N/A"
+						self.result_label[index]['bg'] = NA_COLOR
+					self.result_label[index].grid(row=r,column=c, padx=1, pady=1)
 
 					index += 1
 
@@ -4674,12 +4674,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 											font = RESULT_LABEL_TXT_FONT_1)
 					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
 						self.screening_label[index]['text'] = round(self.result[index]/self.base_window.system_check.threshold,2)
-						if(float(self.screening_label[index]['text']) <= self.base_window.main_menu.num1):
-							self.screening_label[index]['bg'] = NEGATIVE_COLOR
-						elif(float(self.screening_label[index]['text']) <= self.base_window.main_menu.num2):
-							self.screening_label[index]['bg'] = LOW_COPY_COLOR
-						else:
-							self.screening_label[index]['bg'] = POSITIVE_COLOR
+						self.screening_label[index]['bg'] = self.result_label[index]['bg']
 					else:
 						self.screening_label[index]['text'] = "N/A"
 						self.screening_label[index]['bg'] = NA_COLOR
