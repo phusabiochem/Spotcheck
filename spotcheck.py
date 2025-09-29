@@ -5890,10 +5890,10 @@ class QuantitativeAnalysisFrame2(QualitativeAnalysisFrame2):
 		self.title_label['text'] = Quantitative2_Language["Title Label"][language],
 
 	def back_clicked(self):
-		self.base_window.frame_list.remove(self.base_window.system_check)
-		del self.base_window.system_check
-		self.base_window.system_check = SystemCheckFrame(self.base_window)
-		self.base_window.frame_list.append(self.base_window.system_check)
+		# self.base_window.frame_list.remove(self.base_window.system_check)
+		# del self.base_window.system_check
+		# self.base_window.system_check = SystemCheckFrame(self.base_window)
+		# self.base_window.frame_list.append(self.base_window.system_check)
 
 		self.base_window.forget_page()
 		self.base_window.page_num = self.base_window.frame_list.index(self.base_window.quantitative_analysis_1)
