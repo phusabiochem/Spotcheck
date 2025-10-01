@@ -169,10 +169,15 @@ MainScreen_Language = {
 	"Screening LabelFrame": ["Screening Mode", "Định tính"],
 	"Quantitative LabelFrame": ["Quantitative Mode", "Định lượng"],
 	"Admin Button": ["Admin", "Admin"],
+	"Sensitivity LabelFrame": ["Sensitiity", "Độ nhạy"],
+	"Low Button": ["Low", "Thấp"],
+	"High Button": ["High", "Cao"],
 
 	##### Messagebox #####
 	"Exit Confirm": ["Do you want to close the app ?","Bạn có muốn đóng ứng dụng ?"],
 	"SystemCheck Ask": ["It's been a while since the last system check, would you like to check again ?", "Bạn có muốn kiểm tra lại hệ thống ?"]
+
+
 }
 
 ViewResult_Language = {
@@ -253,7 +258,7 @@ Screening3_Language = {
 	"Images Tab": ["Images", "Hình ảnh"],
 	"Note Negative Label": ["NEGATIVE (N)", "ÂM TÍNH (N)"],
 	"Note LowCopy Label": ["LOW COPY (P_L)", "BẢN SAO THẤP (P_L)"],
-	"Note Positive Label": ["POSITIVE (N)", "DƯƠNG TÍNH (P)"],
+	"Note Positive Label": ["POSITIVE (P)", "DƯƠNG TÍNH (P)"],
 	"Note NoSample Label": ["NO SAMPLE (N/A)", "KHÔNG MẪU (N/A)"],
 
 	"RawImage LabelFrame": ["Raw Image", "Ảnh chụp"],
@@ -349,6 +354,8 @@ Quantitative3_Language = {
 	"Report Tab": ["Report", "Báo cáo"],
 	"Images Tab": ["Images", "Hình ảnh"],
 	"Screening Tab": ["Screening", "Định tính"],
+	"HighSensitivity Tab": ["High Sensitivity", "Độ nhạy cao"],
+	"LowSensitivity Tab": ["Low Sensitivity", "Độ nhạy thấp"],
 
 	"Note Value Label": ["Value", "Giá trị"],
 	"Note CT Label": ["CT", "CT"],
@@ -361,6 +368,7 @@ Quantitative3_Language = {
 	"AnalyzedImage LabelFrame": ["Analyzed Image", "Ảnh phân tích"],
 
 	"Finish Button": ["Finish", "Hoàn thành"],
+	"Save Button": ["Save", "Lưu"],
 	"Result Title Text": ["ANALYSIS RESULTS", "KẾT QUẢ"],
 	"Result ExperimentName Text": ["Test: ", "Xét nghiệm: "],
 	"Result TechnicianName Text": ["Technician: ", "Người thực hiện: "],
@@ -388,7 +396,8 @@ QuantitativeKit_Language = {
 	"KitName Label": ["Kit name:", "Tên kit:"],
 	"Concentration Label": ["Concentration", "Nồng độ"],
 	"Value Label": ["Value", "Giá trị"],
-	"NValue Label": ["N Value", "Giá trị N"],
+	"NValue Label": ["N1 Value", "Giá trị N1"],
+	"NValue2 Label": ["N2 Value", "Giá trị N2"],
 	"Save Button": [" Save ", " Lưu "],
 	"Delete Button": ["Delete", " Xoá "],
 	"Clear Button": ["Clear", " Huỷ "],
@@ -417,6 +426,7 @@ SystemCheck_Language = {
 						"Không thể kiểm tra hệ thống (nếu có tấm bảo vệ trên khay chứa mẫu, xin tháo rời nó và khởi động lại ứng dụng)"],
 
 }
+
 #################################### GUI RULES - END #########################################
 
 #################################### ERROR LIST - START #####################################
@@ -2817,7 +2827,7 @@ class QualitativeAnalysisFrame3(Frame):
 						fg = 'black',
 						text = Screening3_Language["Process Label"][language],
 						font = LABEL_TXT_FONT)
-		self.process_label.pack(ipadx=2, ipady=2, anchor=N)
+		self.process_label.pack(ipadx=2, ipady=2)
 
 		if(SERIAL_COMUNICATION):
 			ser.flushInput()
@@ -2934,8 +2944,6 @@ class QualitativeAnalysisFrame3(Frame):
 			self.base_window.update_idletasks()
 			sleep(0.5)
 			
-			
-
 			self.progressbar.destroy()
 			self.process_label.destroy()
 
@@ -2950,7 +2958,7 @@ class QualitativeAnalysisFrame3(Frame):
 			self.tab_control.grid(row=0, column=0, padx=0, pady=1, sticky=EW)
 
 			self.check_result_frame = Frame(self.result_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
-			self.check_result_frame.grid(row=0, column=0, padx=130, pady=2)
+			self.check_result_frame.grid(row=0, column=0, pady=2)
 
 			# ~ Pmw.initialise(self.base_window)
 			# ~ self.tooltip = list(range(48))
@@ -4420,7 +4428,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 						fg = 'black',
 						text = Quantitative3_Language["Process Label"][language],
 						font = LABEL_TXT_FONT)
-		self.process_label.pack(ipadx=2, ipady=2, anchor=N)
+		self.process_label.pack(ipadx=2, ipady=2)
 		
 		if(SERIAL_COMUNICATION):
 			ser.flushInput()
@@ -4553,48 +4561,65 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.process_label.destroy()
 
 			self.tab_control = ttk.Notebook(self.work_frame)
+			self.tab_control.grid(row=0, column=0, padx=0, pady=1, sticky="snew")
+			self.tab_control.rowconfigure(0, weight=1)
+			self.tab_control.columnconfigure(0, weight=1)
+			self.tab_control.bind("<<NotebookTabChanged>>", self.tab_changed)
+
 			self.result_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.screening_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 			self.report_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 			self.image_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.backup_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 
 			self.result_tab.rowconfigure(0, weight=1)
-			self.result_tab.columnconfigure(0, weight=4)
+			self.result_tab.columnconfigure(0, weight=5)
 			self.result_tab.columnconfigure(1, weight=1)
-			self.result_tab.grid_propagate(False)
+			# self.result_tab.grid_propagate(False)
 
-			self.screening_tab.rowconfigure(0, weight=1)
-			self.screening_tab.columnconfigure(0, weight=4)
-			self.screening_tab.columnconfigure(1, weight=1)
-			self.screening_tab.grid_propagate(False)
+			self.backup_tab.rowconfigure(0, weight=1)
+			self.backup_tab.columnconfigure(0, weight=5)
+			self.backup_tab.columnconfigure(1, weight=1)
+			# self.backup_tab.grid_propagate(False)
 
 			self.tab_control.add(self.result_tab, text = Quantitative3_Language["Result Tab"][language])
-			self.tab_control.add(self.screening_tab, text = Quantitative3_Language["Screening Tab"][language])
+			if(self.base_window.main_menu.sensitivity == 1):
+				self.tab_control.add(self.backup_tab, text = Quantitative3_Language["LowSensitivity Tab"][language])
+			else:
+				self.tab_control.add(self.backup_tab, text = Quantitative3_Language["HighSensitivity Tab"][language])
 			self.tab_control.add(self.report_tab, text = Quantitative3_Language["Report Tab"][language])
 			self.tab_control.add(self.image_tab, text = Quantitative3_Language["Images Tab"][language])
-			self.tab_control.grid(row=0, column=0, padx=0, pady=1, sticky=EW)
+			
+
+			if(self.base_window.main_menu.sensitivity == 1):
+				self.n_base = self.base_window.quantitative_analysis_1.n2_base_value
+				self.n_base_backup = self.base_window.quantitative_analysis_1.n_base_value
+			else:
+				self.n_base = self.base_window.quantitative_analysis_1.n_base_value
+				self.n_base_backup = self.base_window.quantitative_analysis_1.n2_base_value
+			print("n_base: ", self.n_base)
+
 
 			self.check_result_frame = Frame(self.result_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
-			self.check_result_frame.grid(row=0, column=0)
-
+			self.check_result_frame.grid(row=0, column=0, sticky="snew")
 			# ~ Pmw.initialise(self.base_window)
 			# ~ self.tooltip = list(range(SC_VERSION))
 			
 			self.result_label = list(range(SC_VERSION))
 			index = 0 
 			for r in range(0, WELL_ROW):
+				self.check_result_frame.rowconfigure(r, weight=1)
 				for c in range(0, WELL_COLUMN):
+					self.check_result_frame.columnconfigure(c, weight=2)
+
 					self.result_label[index] = Label(self.check_result_frame,
-										width=15,
-										height=3,
-										# ~ bg = RESULT_LABEL_BGD_COLOR,
+										width=16,
 										font = RESULT_LABEL_TXT_FONT)
 
 					# ~ self.tooltip[index] = Pmw.Balloon(self.base_window)
 					# ~ self.tooltip[index].bind(result_label[index], self.base_window.quantitative_analysis_2.id_list[index])
 
 					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
-						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.n_base):
 							self.result_label[index]['bg'] = NEGATIVE_COLOR
 							self.result_label[index]['text'] = '0'
 						elif(self.concen_result_list[index] > 0 and self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[0]):
@@ -4618,12 +4643,23 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 					else:
 						self.result_label[index]['text'] = "N/A"
 						self.result_label[index]['bg'] = NA_COLOR
-					self.result_label[index].grid(row=r,column=c, padx=1, pady=1)
+					self.result_label[index].grid(row=r,column=c, padx=1, pady=1, sticky="snew")
 
 					index += 1
 
 			self.annotate_result_frame = Frame(self.result_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.annotate_result_frame.grid(row=0, column=1)
+			self.annotate_result_frame.grid(row=0, column=1,  padx=10, sticky="snew")
+			self.annotate_result_frame.columnconfigure(0, weight=1)
+			self.annotate_result_frame.columnconfigure(1, weight=1)
+			self.annotate_result_frame.rowconfigure(0, weight=2)
+			self.annotate_result_frame.rowconfigure(1, weight=1)
+			self.annotate_result_frame.rowconfigure(2, weight=1)
+			self.annotate_result_frame.rowconfigure(3, weight=1)
+			self.annotate_result_frame.rowconfigure(4, weight=1)
+			self.annotate_result_frame.rowconfigure(5, weight=1)
+			self.annotate_result_frame.rowconfigure(6, weight=1)
+			self.annotate_result_frame.rowconfigure(7, weight=1)
+			self.annotate_result_frame.rowconfigure(8, weight=1)
 			
 			value_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note Value Label"][language], height=2)
 			value_text_label.grid(row=0, column=0, padx=5, pady=6)
@@ -4659,48 +4695,97 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			ct6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="<24", height=2)
 			ct6_text_label.grid(row=7, column=1, padx=3, pady=6)
 
+			# Backup Tab 
+			self.backup_frame = Frame(self.backup_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
+			self.backup_frame.grid(row=0, column=0, sticky="snew")
 
-			#Screening Tab
-			self.screening_result_frame = Frame(self.screening_tab, bg=RESULT_TABLE_FRAME_BGD_COLOR)
-			self.screening_result_frame.grid(row=0, column=0)
-
-			self.screening_label = list(range(SC_VERSION))
-			index = 0
-			for r in range(0, WELL_ROW): 
+			self.backup_result_label = list(range(SC_VERSION))
+			index = 0 
+			for r in range(0, WELL_ROW):
+				self.backup_frame.rowconfigure(r, weight=1)
 				for c in range(0, WELL_COLUMN):
-					self.screening_label[index] = Label(self.screening_result_frame,
-											width = 6, 
-											height = 3,
-											font = RESULT_LABEL_TXT_FONT_1)
-					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
-						self.screening_label[index]['text'] = round(self.result[index]/self.base_window.system_check.threshold,2)
-						self.screening_label[index]['bg'] = self.result_label[index]['bg']
-					else:
-						self.screening_label[index]['text'] = "N/A"
-						self.screening_label[index]['bg'] = NA_COLOR
+					self.backup_frame.columnconfigure(c, weight=2)
 
-					self.screening_label[index].grid(row=r,column=c, padx=1, pady=1)
+					self.backup_result_label[index] = Label(self.backup_frame,
+										width=16,
+										font = RESULT_LABEL_TXT_FONT)
+
+					if(self.base_window.quantitative_analysis_2.id_list[index] != 'N/A'):
+						if(round(self.result[index]/self.base_window.system_check.threshold,2) <= self.n_base_backup):
+							self.backup_result_label[index]['bg'] = NEGATIVE_COLOR
+							self.backup_result_label[index]['text'] = '0'
+						elif(self.concen_result_list[index] > 0 and self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[0]):
+							self.backup_result_label[index]['bg'] = LOW_COPY_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[0]
+						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[1]):
+							self.backup_result_label[index]['bg'] = LOW_COPY_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[1]
+						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[2]):
+							self.backup_result_label[index]['bg'] = LOW_COPY_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[2]
+						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[3]):
+							self.backup_result_label[index]['bg'] = POSITIVE_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[3]
+						elif(self.concen_result_list[index] <= QUANTITATIVE_THRESHOLES[4]):
+							self.backup_result_label[index]['bg'] = POSITIVE_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[4]
+						else:
+							self.backup_result_label[index]['bg'] = POSITIVE_COLOR
+							self.backup_result_label[index]['text'] = QUANTITATIVE_COPY_RANGE[5]
+					else:
+						self.backup_result_label[index]['text'] = "N/A"
+						self.backup_result_label[index]['bg'] = NA_COLOR
+					self.backup_result_label[index].grid(row=r,column=c, padx=1, pady=1, sticky="snew")
+
 					index += 1
 
-			self.annotate_result_frame = Frame(self.screening_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.annotate_result_frame.grid(row=0, column=1)
+			self.annotate_result_frame = Frame(self.backup_tab, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			self.annotate_result_frame.grid(row=0, column=1,  padx=10, sticky="snew")
+			self.annotate_result_frame.columnconfigure(0, weight=1)
+			self.annotate_result_frame.columnconfigure(1, weight=1)
+			self.annotate_result_frame.rowconfigure(0, weight=2)
+			self.annotate_result_frame.rowconfigure(1, weight=1)
+			self.annotate_result_frame.rowconfigure(2, weight=1)
+			self.annotate_result_frame.rowconfigure(3, weight=1)
+			self.annotate_result_frame.rowconfigure(4, weight=1)
+			self.annotate_result_frame.rowconfigure(5, weight=1)
+			self.annotate_result_frame.rowconfigure(6, weight=1)
+			self.annotate_result_frame.rowconfigure(7, weight=1)
+			self.annotate_result_frame.rowconfigure(8, weight=1)
 			
-			negative_label = Label(self.annotate_result_frame, bg=NEGATIVE_COLOR, width=4, height=2)
-			negative_label.grid(row=0, column=0, padx=30, pady=8)
-			negative_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note Negative Label"][language], height=2)
-			negative_text_label.grid(row=0, column=1, padx=45, pady=8)
-			low_copy_label = Label(self.annotate_result_frame, bg=LOW_COPY_COLOR, width=4, height=2)
-			low_copy_label.grid(row=1, column=0, padx=30, pady=8)
-			low_copy_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note LowCopy Label"][language], height=2)
-			low_copy_text_label.grid(row=1, column=1, padx=45, pady=8)
-			positive_label = Label(self.annotate_result_frame, bg=POSITIVE_COLOR, width=4, height=2)
-			positive_label.grid(row=2, column=0, padx=30, pady=8)
-			positive_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note Positive Label"][language], height=2)
-			positive_text_label.grid(row=2, column=1, padx=45, pady=8)
-			na_label = Label(self.annotate_result_frame, bg=NA_COLOR, width=4, height=2)
-			na_label.grid(row=3, column=0, padx=30, pady=8)
-			na_copy_text_label = Label(self.annotate_result_frame, bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Screening3_Language["Note NoSample Label"][language], height=2)
-			na_copy_text_label.grid(row=3, column=1, padx=45, pady=8)
+			value_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note Value Label"][language], height=2)
+			value_text_label.grid(row=0, column=0, padx=3, pady=6)
+			ct_text_label = Label(self.annotate_result_frame, font=("Arial", 10, 'bold'), bg=MAIN_FUNCTION_FRAME_BGD_COLOR, text=Quantitative3_Language["Note CT Label"][language], height=2)
+			ct_text_label.grid(row=0, column=1, padx=3, pady=6)
+
+			value0_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=NEGATIVE_COLOR, width=12, text="0", height=2)
+			value0_text_label.grid(row=1, column=0, padx=3, pady=6)
+			ct0_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=NEGATIVE_COLOR, width=12, text="-", height=2)
+			ct0_text_label.grid(row=1, column=1, padx=3, pady=6)
+			value1_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="1-100", height=2)
+			value1_text_label.grid(row=2, column=0, padx=3, pady=6)
+			ct1_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text=">37", height=2)
+			ct1_text_label.grid(row=2, column=1, padx=3, pady=6)
+			value2_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="101-500", height=2)
+			value2_text_label.grid(row=3, column=0, padx=3, pady=6)
+			ct2_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="33-37", height=2)
+			ct2_text_label.grid(row=3, column=1, padx=3, pady=6)
+			value3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="501-1000", height=2)
+			value3_text_label.grid(row=4, column=0, padx=3, pady=6)
+			ct3_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=LOW_COPY_COLOR, width=12, text="30-32", height=2)
+			ct3_text_label.grid(row=4, column=1, padx=3, pady=6)
+			value4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="1001-10000", height=2)
+			value4_text_label.grid(row=5, column=0, padx=3, pady=6)
+			ct4_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="27-29", height=2)
+			ct4_text_label.grid(row=5, column=1, padx=3, pady=6)
+			value5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="10001-100000", height=2)
+			value5_text_label.grid(row=6, column=0, padx=3, pady=6)
+			ct5_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="24-26", height=2)
+			ct5_text_label.grid(row=6, column=1, padx=3, pady=6)
+			value6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text=">100000", height=2)
+			value6_text_label.grid(row=7, column=0, padx=3, pady=6)
+			ct6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="<24", height=2)
+			ct6_text_label.grid(row=7, column=1, padx=3, pady=6)
 
 			#Image Tab
 			img_labelframe_1 = LabelFrame(self.image_tab,
@@ -4751,7 +4836,18 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 									fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
 									borderwidth = 0,
 									command = self.finish_clicked)
-			self.finish_button.pack(ipady=10)
+			self.finish_button.pack(ipady=10, side="top", anchor="e")
+
+			self.save_button = Button(self.button_frame,
+									text = Quantitative3_Language["Save Button"][language],
+									font = SWITCH_PAGE_BUTTON_FONT,
+									width = 10,
+									# height = SWITCH_PAGE_BUTTON_HEIGHT,
+									bg = 'dodger blue',
+									fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+									borderwidth = 0,
+									command = self.save_clicked)
+			# self.save_button.pack(ipady=10, anchor="center")
 
 			self.base_window.update_idletasks()
 			self.base_window.server_setting.check_status()
@@ -4869,7 +4965,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 				if(self.base_window.quantitative_analysis_2.id_list[c1]=='N/A'):
 					sheet['D'+ str(i + RESULT_CELL_START)] = 'N/A'
 				else:
-					if(round(self.result[c1]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+					if(round(self.result[c1]/self.base_window.system_check.threshold,2) <= self.n_base):
 						sheet['D'+ str(i + RESULT_CELL_START)] = '0'
 						sheet['E'+ str(i + RESULT_CELL_START)] = '-'
 						sheet['D'+ str(i + RESULT_CELL_START)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -4946,7 +5042,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 				if(self.base_window.quantitative_analysis_2.id_list[c2]=='N/A'):
 					sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = 'N/A'
 				else:
-					if(round(self.result[c2]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+					if(round(self.result[c2]/self.base_window.system_check.threshold,2) <= self.n_base):
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)] = '0'
 						sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW)] = '-'
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -5024,7 +5120,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 				if(self.base_window.quantitative_analysis_2.id_list[c3]=='N/A'):
 					sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*2)] = 'N/A'
 				else:
-					if(round(self.result[c3]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+					if(round(self.result[c3]/self.base_window.system_check.threshold,2) <= self.n_base):
 						sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*2)] = '0'
 						sheet['E'+str(i + RESULT_CELL_START + WELL_ROW*2)] = '-'
 						sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*2)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -5101,7 +5197,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 				if(self.base_window.quantitative_analysis_2.id_list[c4]=='N/A'):
 					sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*3)] = 'N/A'
 				else:
-					if(round(self.result[c4]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+					if(round(self.result[c4]/self.base_window.system_check.threshold,2) <= self.n_base):
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '0'
 						sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*3)] = '-'
 						sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*3)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -5183,7 +5279,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 					if(self.base_window.quantitative_analysis_2.id_list[c5]=='N/A'):
 						sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*4)] = 'N/A'
 					else:
-						if(round(self.result[c5]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+						if(round(self.result[c5]/self.base_window.system_check.threshold,2) <= self.n_base):
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '0'
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*4)] = '-'
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*4)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -5260,7 +5356,7 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 					if(self.base_window.quantitative_analysis_2.id_list[c6]=='N/A'):
 						sheet['D'+str(i + RESULT_CELL_START + WELL_ROW*5)] = 'N/A'
 					else:
-						if(round(self.result[c6]/self.base_window.system_check.threshold,2) <= self.base_window.quantitative_analysis_1.n_base_value):
+						if(round(self.result[c6]/self.base_window.system_check.threshold,2) <= self.n_base):
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '0'
 							sheet['E'+ str(i + RESULT_CELL_START + WELL_ROW*5)] = '-'
 							sheet['D'+ str(i + RESULT_CELL_START + WELL_ROW*5)].fill = PatternFill(start_color='0000FF00', end_color='0000FF00', fill_type='solid')
@@ -5435,9 +5531,11 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.base_window.switch_page()
 			self.base_window.main_menu.reset()
 
-	def finish_clicked(self):
+
 		wb = load_workbook(self.base_window.quantitative_analysis_0.result_folder_path +  '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
 		sheet = wb.active
+		self.tab_control.update_idletasks()
+		sleep(1)
 		subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/result_capture.jpg"])
 		img = Img(self.base_window.quantitative_analysis_0.result_folder_path + "/result_capture.jpg")
 		img.width = round(1024*50/100)
@@ -5447,12 +5545,26 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 		wb.save(self.base_window.quantitative_analysis_0.result_folder_path + '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
 		wb.close()
 
-		self.tab_control.select(self.screening_tab)
-		self.tab_control.update_idletasks()
-		sleep(1)
-		subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/screening.jpg"])
+	def tab_changed(self, event):
+		try: 
+			self.save_button.place_forget()
+		except:
+			pass
+		tab_index = self.tab_control.index(self.tab_control.select())  # lấy chỉ số tab hiện tại
+		if(tab_index == 1):
+			self.save_button.place(relx=0.5, rely=0.5, relheight=1.0, anchor="center")
 
-		msg = messagebox.askquestion("",Quantitative3_Language["Finish Question"][language])
+	def save_clicked(self):
+		if(self.base_window.main_menu.sensitivity == 1):
+			file_name = "/low_sensitivity.jpg"
+		else: 
+			file_name = "/high_sensitivity.jpg"
+		subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + file_name])
+		sleep(1)
+		messagebox.showinfo("", Quantitative3_Language["SaveFile Success"][language])
+
+	def finish_clicked(self):
+		msg = messagebox.askquestion("", Quantitative3_Language["Finish Question"][language])
 		if(msg=="yes"):
 			self.base_window.forget_page()
 			self.base_window.page_num = self.base_window.frame_list.index(self.base_window.main_menu)
@@ -6366,6 +6478,7 @@ class QuantitativeAnalysisFrame1(Frame):
 		# ~ self.b_value = float(sheetn["G2"].value)
 		
 		self.n_base_value = float(sheet["A1"].value)
+		self.n2_base_value = float(sheet["A2"].value)
 		
 		concen1_enalble = 1
 		concen2_enalble = 1
@@ -6489,7 +6602,10 @@ class QuantitativeAnalysisFrame1(Frame):
 				self.status_text.insert(END, str(sheet["C6"].value) + '\n')
 			self.status_text.insert(END, "a_value: " + str(self.a_value) + '\n')
 			self.status_text.insert(END, "b_value: " + str(self.b_value) + '\n')
-			self.status_text.insert(END, "n_base_value: " + str(self.n_base_value) + '\n')
+			if(self.base_window.main_menu.sensitivity == 1):
+				self.status_text.insert(END, "n_base_value: " + str(self.n2_base_value) + '\n')
+			else:
+				self.status_text.insert(END, "n_base_value: " + str(self.n_base_value) + '\n')
 
 		except:
 			pass
@@ -9010,7 +9126,7 @@ class SettingFrame(Frame):
 		self.title_frame = Frame(self, bg = TITILE_FRAME_BGD_COLOR)
 		self.title_frame.pack(ipadx=0, ipady=5, fill=X)
 		self.work_frame = Frame(self, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.work_frame.pack(expand=TRUE, pady=40)
+		self.work_frame.pack(expand=TRUE)
 		self.work_frame.pack_propagate(0)
 		self.button_frame = Frame(self, bg = MAIN_MENU_BUTTON_FRAME_BGD_COLOR)
 		self.button_frame.pack(fill=X, expand=TRUE)
@@ -9052,7 +9168,7 @@ class SettingFrame(Frame):
 							fg = LABEL_TXT_COLOR,
 							font = ('Helvetica', 12),
 							anchor = 'e')
-		self.experiment_name_label.grid(row=0, column=0, padx=8, sticky=E)
+		self.experiment_name_label.grid(row=0, column=0, padx=5, sticky=E)
 
 		self.experiment_name_text = Text(self.file_name_frame,
 							width = 22,
@@ -9060,7 +9176,7 @@ class SettingFrame(Frame):
 							bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 							fg = LABEL_TXT_COLOR,
 							font = ('Arial', 14))
-		self.experiment_name_text.grid(row=0, column=1, padx=2, pady=12)
+		self.experiment_name_text.grid(row=0, column=1, padx=2, pady=30)
 
 		# In info_labelframe
 		self.concentration_label = Label(self.info_labelframe,
@@ -9117,6 +9233,18 @@ class SettingFrame(Frame):
 								width=10, 
 								font=('Arial',15))
 		self.base_value_entry.grid(row=0, column=2, padx=13, pady=10)
+
+		self.base2_value_label = Label(self.base_value_labelframe,
+									bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
+									text = QuantitativeKit_Language["NValue2 Label"][language],
+									font = LABEL_TXT_FONT,
+									fg = LABEL_TXT_COLOR)
+		self.base2_value_label.grid(row=1, column=1, padx=16, pady=5)
+
+		self.base2_value_entry = Entry(self.base_value_labelframe,
+								width=10, 
+								font=('Arial',15))
+		self.base2_value_entry.grid(row=1, column=2, padx=13, pady=10)
 								
 		
 		# In control_frame
@@ -9184,7 +9312,7 @@ class SettingFrame(Frame):
 				if(self.concentration_entry_list[i].get() != "" and self.value_entry_list[i] != ""):
 					count += 1
 			if(count >= 3):
-				if(self.base_value_entry.get() != ""):
+				if(self.base_value_entry.get() != "" or self.base2_value_entry.get() != ""):
 					if os.path.exists(programs_quantitative_path + program_name + '.xlsx'):
 						msg = messagebox.askquestion(QuantitativeKit_Language["FileExists Error"][language], QuantitativeKit_Language["FileExists Ask"][language])
 						if(msg == 'yes'):
@@ -9192,6 +9320,7 @@ class SettingFrame(Frame):
 							sheet = wb.active
 
 							sheet["A1"] = self.base_value_entry.get()
+							sheet["A2"] = self.base2_value_entry.get()
 							sheet["B2"] = self.concentration_entry_list[0].get()
 							sheet["C2"] = self.value_entry_list[0].get()
 							sheet["B3"] = self.concentration_entry_list[1].get()
@@ -9213,6 +9342,7 @@ class SettingFrame(Frame):
 						sheet = wb.active
 
 						sheet["A1"] = self.base_value_entry.get()
+						sheet["A2"] = self.base2_value_entry.get()
 						sheet["B2"] = self.concentration_entry_list[0].get()
 						sheet["C2"] = self.value_entry_list[0].get()
 						sheet["B3"] = self.concentration_entry_list[1].get()
@@ -9231,6 +9361,7 @@ class SettingFrame(Frame):
 
 						self.experiment_name_text.delete("1.0","end")
 						self.base_value_entry.delete(0, END)
+						self.base2_value_entry.delete(0, END)
 						for i in range(0,5):
 							self.concentration_entry_list[i].delete(0, END)
 							self.value_entry_list[i].delete(0, END)
@@ -9262,6 +9393,7 @@ class SettingFrame(Frame):
 	def clear_clicked(self):
 		self.experiment_name_text.delete("1.0","end")
 		self.base_value_entry.delete(0, END)
+		self.base2_value_entry.delete(0, END)
 		for i in range(0,5):
 			self.concentration_entry_list[i].delete(0, END)
 			self.value_entry_list[i].delete(0, END)
@@ -9305,6 +9437,7 @@ class SettingFrame(Frame):
 		# ~ self.b_value = float(sheetn["G2"].value)
 		
 		self.n_base_value = float(sheet["A1"].value)
+		self.n2_base_value = float(sheet["A2"].value)
 		
 		concen1_enalble = 1
 		concen2_enalble = 1
@@ -9356,6 +9489,8 @@ class SettingFrame(Frame):
 
 		self.base_value_entry.delete(0, END)
 		self.base_value_entry.insert(0, self.n_base_value)
+		self.base2_value_entry.delete(0, END)
+		self.base2_value_entry.insert(0, self.n2_base_value)
 
 		self.concentration_entry_list[0].delete(0,END)
 		self.value_entry_list[0].delete(0,END)
@@ -9808,155 +9943,58 @@ class MainMenu(Frame):
 		self.connect_button['state'] = 'disabled'
 
 	def screening_clicked(self):		
-		self.analysis_clicked()
+		self.threshold_label_frame = LabelFrame(self.work_frame,
+											# ~ width = 600,
+											# ~ height = 300,
+											text = MainScreen_Language['Sensitivity LabelFrame'][language],
+											bg = 'grey70')
+		self.threshold_label_frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=1, relheight=1)
+		# self.threshold_label_frame.pack(expand=True, fill="both")
 
-		#########################################################################################################
-		# self.threshold_label_frame = LabelFrame(self.work_frame,
-		# 									# ~ width = 600,
-		# 									# ~ height = 300,
-		# 									text = MainScreen_Language['Screening LabelFrame'][language],
-		# 									bg = 'grey70')
-		# self.threshold_label_frame.place(x=35, y=95)
+		self.thr1_button = Button(self.threshold_label_frame,
+					text = MainScreen_Language['High Button'][language],
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					font = ("Arial", 12),
+					command = self.thr1_clicked)
+		self.thr1_button.pack(side="left", expand=True, fill="both", padx=100, pady=120)
 
-		# self.thr1_button = Button(self.threshold_label_frame,
-		# 			text = MainScreen_Language['Environment Button'][language],
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.thr1_clicked)
-		# self.thr1_button.pack(side=LEFT, padx=30, pady=50, ipady=10, ipadx=2)
-
-		# self.thr2_button = Button(self.threshold_label_frame,
-		# 			text = MainScreen_Language['Host Button'][language],
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.thr2_clicked)
-		# self.thr2_button.pack(side=LEFT, padx=30, pady=50, ipady=10, ipadx=21)
+		self.thr2_button = Button(self.threshold_label_frame,
+					text = MainScreen_Language['Low Button'][language],
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					font = ("Arial", 12),
+					command = self.thr2_clicked)
+		self.thr2_button.pack(side="left", expand=True, fill="both", padx=100, pady=120)
 		
-		# self.cancel_button = Button(self.threshold_label_frame,
-		# 			text = "X",
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			width = 1,
-		# 			height = 1,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.cancel_clicked)
-		# self.cancel_button.place(x=319,y=-18)
+		self.cancel_button = Button(self.threshold_label_frame,
+					text = "X",
+					font = SWITCH_PAGE_BUTTON_FONT,
+					width = 1,
+					height = 1,
+					bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
+					fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
+					borderwidth = 0,
+					command = self.cancel_clicked)
+		self.cancel_button.place(relx=1.0, rely=0.0, anchor="ne")
 		
 		# self.quantitative_button['state'] = 'disabled'
-		# self.view_result_button['state'] = 'disabled'
-		# self.create_file_button['state'] = 'disabled'
-		# self.connect_button['state'] = 'disabled'
-		#########################################################################################################
+		self.view_result_button['state'] = 'disabled'
+		self.create_file_button['state'] = 'disabled'
+		self.connect_button['state'] = 'disabled'
 		
 	def thr1_clicked(self):
 		self.threshold_label_frame.place_forget()
-		
-		self.threshold_value = 0; # su dung gia tri thu 1 trong file multiplier de so sanh
-		fr = open(working_dir + "/multiplier.txt","r")
-		self.num1 = float(fr.readline())
-		self.num2 = float(fr.readline())
-		self.num3 = float(fr.readline())
-		
-		####### SYSTEM CHECK ########
-		global last_checkDate, last_checkMonth, last_checkYear, last_checkHour, last_checkMinute, last_checkSecond, last_checkValue
-		fr = open(working_dir + "/.system.txt","r")
-		last_checkDay = int(fr.readline())
-		last_checkMonth = int(fr.readline())
-		last_checkYear = int(fr.readline())
-		last_checkHour = int(fr.readline())
-		last_checkMinute = int(fr.readline())
-		last_checkSecond = int(fr.readline())
-		last_checkValue = float(fr.readline())
-		
-		now = datetime.now()
-		
-		time1 = last_checkYear*31536000 + last_checkMonth*2419200 + last_checkDay*86400 + last_checkHour*3600 + last_checkMinute*60 + last_checkSecond
-		time2 = now.year*31536000 + now.month*2419200 + now.day*86400 + now.hour*3600 + now.minute*60 + now.second         
-		number_of_hours = round(abs((time2 - time1)/3600),1)
-		
-		print("number_of_hours: ", number_of_hours)
-		
-		if(number_of_hours >= 1):
-			msg = messagebox.askquestion("","It's been a while since the last system check, would you like to check again ?")
-			if(msg == 'yes'):
-				self.base_window.system_check.mode_check = 1
-				self.base_window.forget_page()
-				self.base_window.page_num = self.base_window.frame_list.index(self.base_window.system_check)
-				self.base_window.switch_page()
-				self.base_window.update_idletasks()
-				self.base_window.system_check.serial_handle()
-			else:
-				self.base_window.forget_page()
-				self.base_window.page_num = self.base_window.frame_list.index(self.base_window.qualitative_analysis_0)
-				self.base_window.switch_page()
-		else:
-			self.base_window.forget_page()
-			self.base_window.page_num = self.base_window.frame_list.index(self.base_window.qualitative_analysis_0)
-			self.base_window.switch_page()
-			
-		self.quantitative_button['state'] = 'normal'
-		self.view_result_button['state'] = 'normal'
-		self.create_file_button['state'] = 'normal'
-		self.connect_button['state'] = 'normal'
-		# self.language_button['state'] = 'normal'
+		self.sensitivity = 1
+		self.analysis_clicked()
 	
 			
 	def thr2_clicked(self):
 		self.threshold_label_frame.place_forget()
-		
-		self.threshold_value = 1; # su dung gia tri thu 2 trong file multiplier de so sanh
-		fr = open(working_dir + "/multiplier.txt","r")
-		self.num1 = float(fr.readline())
-		self.num2 = float(fr.readline())
-		self.num3 = float(fr.readline())
-		
-		####### SYSTEM CHECK ########
-		global last_checkDate, last_checkMonth, last_checkYear, last_checkHour, last_checkMinute, last_checkSecond, last_checkValue
-		fr = open(working_dir + "/.system.txt","r")
-		last_checkDay = int(fr.readline())
-		last_checkMonth = int(fr.readline())
-		last_checkYear = int(fr.readline())
-		last_checkHour = int(fr.readline())
-		last_checkMinute = int(fr.readline())
-		last_checkSecond = int(fr.readline())
-		last_checkValue = float(fr.readline())
-		
-		now = datetime.now()
-		
-		time1 = last_checkYear*31536000 + last_checkMonth*2419200 + last_checkDay*86400 + last_checkHour*3600 + last_checkMinute*60 + last_checkSecond
-		time2 = now.year*31536000 + now.month*2419200 + now.day*86400 + now.hour*3600 + now.minute*60 + now.second  
-		number_of_hours = round(abs((time2 - time1)/3600),1)
-		
-		print("number_of_hours: ", number_of_hours)
-		
-		if(number_of_hours >= 1):
-			msg = messagebox.askquestion("",MainScreen_Language["SystemCheck Ask"][language])
-			if(msg == 'yes'):
-				self.base_window.system_check.mode_check = 1
-				self.base_window.forget_page()
-				self.base_window.page_num = self.base_window.frame_list.index(self.base_window.system_check)
-				self.base_window.switch_page()
-				self.base_window.update_idletasks()
-				self.base_window.system_check.serial_handle()
-			else:
-				self.base_window.forget_page()
-				self.base_window.page_num = self.base_window.frame_list.index(self.base_window.qualitative_analysis_0)
-				self.base_window.switch_page()
-		else:
-			self.base_window.forget_page()
-			self.base_window.page_num = self.base_window.frame_list.index(self.base_window.qualitative_analysis_0)
-			self.base_window.switch_page()
-		
-		self.quantitative_button['state'] = 'normal'
-		self.view_result_button['state'] = 'normal'
-		self.create_file_button['state'] = 'normal'
-		self.connect_button['state'] = 'normal'
-		# self.language_button['state'] = 'normal'
+		self.sensitivity = 0
+		self.analysis_clicked()
 	
 		
 	def cancel_clicked(self):
@@ -9975,48 +10013,6 @@ class MainMenu(Frame):
 	def quantitative_clicked(self):
 		self.setting_clicked()
 		
-		#####################################################################################################
-		# self.quanti_labelframe = LabelFrame(self.work_frame,
-		# 									text = MainScreen_Language['Quantitative LabelFrame'][language],
-		# 									bg = 'grey70')
-		# self.quanti_labelframe.place(x=380, y=95)
-
-		
-		# self.analysis_button = Button(self.quanti_labelframe,
-		# 			text = MainScreen_Language['Analysis Button'][language],
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.analysis_clicked)
-		# self.analysis_button.pack(side=LEFT, padx=30, pady=50, ipady=10, ipadx=20)
-
-		# self.setting_button = Button(self.quanti_labelframe,
-		# 			text = MainScreen_Language['Setting Button 2'][language],
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.setting_clicked)
-		# self.setting_button.pack(side=LEFT, padx=30, pady=50, ipady=10, ipadx=21)
-		
-		# self.cancel2_button = Button(self.quanti_labelframe,
-		# 			text = "X",
-		# 			font = SWITCH_PAGE_BUTTON_FONT,
-		# 			width = 1,
-		# 			height = 1,
-		# 			bg = SWITCH_PAGE_BUTTON_BGD_COLOR,
-		# 			fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
-		# 			borderwidth = 0,
-		# 			command = self.cancel2_clicked)
-		# self.cancel2_button.place(x=319,y=-18)
-		
-		# self.screening_button['state'] = 'disabled'
-		# self.view_result_button['state'] = 'disabled'
-		# self.create_file_button['state'] = 'disabled'
-		# self.connect_button['state'] = 'disabled'
-		#####################################################################################################		
-
 
 	def analysis_clicked(self):
 		try:
