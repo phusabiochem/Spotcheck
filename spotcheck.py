@@ -169,9 +169,9 @@ MainScreen_Language = {
 	"Screening LabelFrame": ["Screening Mode", "Định tính"],
 	"Quantitative LabelFrame": ["Quantitative Mode", "Định lượng"],
 	"Admin Button": ["Admin", "Admin"],
-	"Sensitivity LabelFrame": ["Sensitiity", "Độ nhạy"],
-	"Low Button": ["Low", "Thấp"],
-	"High Button": ["High", "Cao"],
+	"Sensitivity LabelFrame": ["Sensitivity", "Độ nhạy"],
+	"Low Button": ["Low Sensitivity", "Độ nhạy thấp"],
+	"High Button": ["High Sensitivity", "Độ nhạy cao"],
 
 	##### Messagebox #####
 	"Exit Confirm": ["Do you want to close the app ?","Bạn có muốn đóng ứng dụng ?"],
@@ -396,8 +396,8 @@ QuantitativeKit_Language = {
 	"KitName Label": ["Kit name:", "Tên kit:"],
 	"Concentration Label": ["Concentration", "Nồng độ"],
 	"Value Label": ["Value", "Giá trị"],
-	"NValue Label": ["N1 Value", "Giá trị N1"],
-	"NValue2 Label": ["N2 Value", "Giá trị N2"],
+	"NValue Label": ["N Value (Low)", "Giá trị N (thấp)"],
+	"NValue2 Label": ["N Value (High)", "Giá trị N (cao)"],
 	"Save Button": [" Save ", " Lưu "],
 	"Delete Button": ["Delete", " Xoá "],
 	"Clear Button": ["Clear", " Huỷ "],
@@ -2971,7 +2971,7 @@ class QualitativeAnalysisFrame3(Frame):
 			for r in range(0, WELL_ROW):
 				for c in range(0, WELL_COLUMN):
 					self.result_label[index] = Label(self.check_result_frame,
-											width = 6, 
+											width = 12, 
 											height = 3,
 											font = RESULT_LABEL_TXT_FONT_1)
 
@@ -4567,8 +4567,8 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.tab_control.bind("<<NotebookTabChanged>>", self.tab_changed)
 
 			self.result_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.report_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
-			self.image_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			# self.report_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+			# self.image_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 			self.backup_tab = Frame(self.tab_control, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
 
 			self.result_tab.rowconfigure(0, weight=1)
@@ -4581,13 +4581,15 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.backup_tab.columnconfigure(1, weight=1)
 			# self.backup_tab.grid_propagate(False)
 
-			self.tab_control.add(self.result_tab, text = Quantitative3_Language["Result Tab"][language])
+			
 			if(self.base_window.main_menu.sensitivity == 1):
+				self.tab_control.add(self.result_tab, text = Quantitative3_Language["HighSensitivity Tab"][language])
 				self.tab_control.add(self.backup_tab, text = Quantitative3_Language["LowSensitivity Tab"][language])
 			else:
+				self.tab_control.add(self.result_tab, text = Quantitative3_Language["LowSensitivity Tab"][language])
 				self.tab_control.add(self.backup_tab, text = Quantitative3_Language["HighSensitivity Tab"][language])
-			self.tab_control.add(self.report_tab, text = Quantitative3_Language["Report Tab"][language])
-			self.tab_control.add(self.image_tab, text = Quantitative3_Language["Images Tab"][language])
+			# self.tab_control.add(self.report_tab, text = Quantitative3_Language["Report Tab"][language])
+			# self.tab_control.add(self.image_tab, text = Quantitative3_Language["Images Tab"][language])
 			
 
 			if(self.base_window.main_menu.sensitivity == 1):
@@ -4786,45 +4788,6 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			value6_text_label.grid(row=7, column=0, padx=3, pady=6)
 			ct6_text_label = Label(self.annotate_result_frame, font=("Arial", 9), bg=POSITIVE_COLOR, width=12, text="<24", height=2)
 			ct6_text_label.grid(row=7, column=1, padx=3, pady=6)
-
-			#Image Tab
-			img_labelframe_1 = LabelFrame(self.image_tab,
-										bg="black",
-										text=Quantitative3_Language["RawImage LabelFrame"][language],
-										fg="cyan",
-										font = LABELFRAME_TXT_FONT)
-			img_labelframe_1.pack(fill=BOTH, expand=TRUE, side=LEFT)
-
-			img_labelframe_2 = LabelFrame(self.image_tab,
-										bg="black",
-										text=Quantitative3_Language["AnalyzedImage LabelFrame"][language],
-										fg="cyan",
-										font = LABELFRAME_TXT_FONT)
-			img_labelframe_2.pack(fill=BOTH, expand=TRUE, side=RIGHT)
-
-			a1 = Image.open(self.base_window.quantitative_analysis_0.analysis_result_folder + '/raw.jpg')
-			a1_crop = a1.crop((x1-10, y1-10, x2+10, y2+10))
-			crop_width, crop_height = a1_crop.size
-			scale_percent = 100
-			width = int(crop_width * scale_percent / 100)
-			height = int(crop_height * scale_percent / 100)
-			display_img = a1_crop.resize((width,height))
-			a1_display = ImageTk.PhotoImage(display_img)
-			a1_label = Label(img_labelframe_1, image=a1_display, bg="black")
-			a1_label.image = a1_display
-			a1_label.pack(fill=BOTH, expand=TRUE)
-
-			a2 = Image.open(self.base_window.quantitative_analysis_0.analysis_result_folder + '/process.jpg')
-			a2_crop = a2.crop((x1-10, y1-10, x2+10, y2+10))
-			crop_width, crop_height = a2_crop.size
-			scale_percent = 100
-			width = int(crop_width * scale_percent / 100)
-			height = int(crop_height * scale_percent / 100)
-			display_img = a2_crop.resize((width,height))
-			a2_display = ImageTk.PhotoImage(display_img)
-			a2_label = Label(img_labelframe_2, image=a2_display, bg="black")
-			a2_label.image = a2_display
-			a2_label.pack(fill=BOTH, expand=TRUE)
 
 			# In button frame
 			self.finish_button = Button(self.button_frame,
@@ -5457,60 +5420,9 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			sheet.cell(row=tmp_row_value + 4,column=5).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			sheet.cell(row=tmp_row_value + 5,column=5).alignment = Alignment(horizontal='center',vertical='center',wrapText=True)
 			############## Cat bo vi tri N/A ###############
-
-			# sheet.print_area = 'A1:G70'
-			
+			# sheet.print_area = 'A1:G70'	
 			wb.save(self.base_window.quantitative_analysis_0.result_folder_path + '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
 
-			# Report tab
-			self.report_frame = ScrollableFrame2(self.report_tab)
-			self.report_frame.pack(pady=5)
-			
-			wb = load_workbook(self.base_window.quantitative_analysis_0.result_folder_path +  '/' + self.base_window.quantitative_analysis_0.experiment_name + '.xlsx')
-			sheet = wb.active
-			
-			sample_button_list = list(range(SC_VERSION + 1))
-			result_button_list = list(range(SC_VERSION + 1))
-			position_button_list = list(range(SC_VERSION + 1))
-
-			for i in range(0, tmp_row_value - RESULT_CELL_START + 2):
-				sample_pos = 'B' + str(i+(RESULT_CELL_START-1))
-				sample_button_list[i] = Button(self.report_frame.scrollable_frame,
-						fg = LABEL_TXT_COLOR,
-						font = LABEL_TXT_FONT,
-						text= sheet[sample_pos].value,
-						width=44,
-						bg = 'lavender',
-						borderwidth = 0)
-				sample_button_list[i].grid(row=i, column=0, sticky=EW, padx=1, pady=1)
-
-				position_pos = 'C' + str(i+(RESULT_CELL_START-1))
-				position_button_list[i] = Button(self.report_frame.scrollable_frame,
-						fg = LABEL_TXT_COLOR,
-						font = LABEL_TXT_FONT,
-						text= sheet[position_pos].value,
-						width=15,
-						bg = 'lavender',
-						borderwidth = 0)
-				position_button_list[i].grid(row=i, column=1, sticky=EW, padx=1, pady=1)
-
-				result_pos = 'D' + str(i+(RESULT_CELL_START-1))
-				result_button_list[i] = Button(self.report_frame.scrollable_frame,
-						fg = LABEL_TXT_COLOR,
-						font = LABEL_TXT_FONT,
-						text= sheet[result_pos].value,
-						width=30,
-						bg = 'lavender',
-						borderwidth = 0)
-				result_button_list[i].grid(row=i, column=3, sticky=EW, padx=1, pady=1)
-				
-				if(i>0 and result_button_list[i]['text'] != 'N/A'):
-					if(result_button_list[i]['text'] == '0'):
-						result_button_list[i]['bg'] = NEGATIVE_COLOR
-					else:
-						result_button_list[i]['bg'] = LOW_COPY_COLOR
-			
-			wb.close()
 			
 			if(os.path.exists(id_path + self.base_window.quantitative_analysis_2.id_file_name_label['text'] + '.xlsx')):
 				try:
@@ -5522,7 +5434,6 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 			self.server_check()
 
 			self.title_label['text'] = Quantitative3_Language["FinalTitle Label"][language]
-
 			msg = messagebox.showinfo("", Quantitative3_Language["Complete Inform"][language])				
 
 		else:
@@ -5536,8 +5447,12 @@ class QuantitativeAnalysisFrame3(QualitativeAnalysisFrame3):
 		sheet = wb.active
 		self.tab_control.update_idletasks()
 		sleep(1)
-		subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/result_capture.jpg"])
-		img = Img(self.base_window.quantitative_analysis_0.result_folder_path + "/result_capture.jpg")
+		if(self.base_window.main_menu.sensitivity == 1):
+			subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/high_sensitivity.jpg"])
+			img = Img(self.base_window.quantitative_analysis_0.result_folder_path + "/high_sensitivity.jpg")
+		else:
+			subprocess.call(["scrot", self.base_window.quantitative_analysis_0.result_folder_path + "/low_sensitivity.jpg"])
+			img = Img(self.base_window.quantitative_analysis_0.result_folder_path + "/low_sensitivity.jpg")
 		img.width = round(1024*50/100)
 		img.height = round(600*50/100)
 		img.anchor = 'I' + str(RESULT_CELL_START-1)
@@ -9123,11 +9038,12 @@ class SettingFrame(Frame):
 		self['bg'] = MAIN_FUNCTION_FRAME_BGD_COLOR
 		self.base_window = container
 
+
 		self.title_frame = Frame(self, bg = TITILE_FRAME_BGD_COLOR)
 		self.title_frame.pack(ipadx=0, ipady=5, fill=X)
 		self.work_frame = Frame(self, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.work_frame.pack(expand=TRUE)
-		self.work_frame.pack_propagate(0)
+		self.work_frame.pack(expand=TRUE, fill="both", pady=110)
+		# self.work_frame.pack_propagate(0)
 		self.button_frame = Frame(self, bg = MAIN_MENU_BUTTON_FRAME_BGD_COLOR)
 		self.button_frame.pack(fill=X, expand=TRUE)
 
@@ -9140,43 +9056,69 @@ class SettingFrame(Frame):
 		self.title_label.pack(expand=TRUE)
 
 		#In work frame
-		self.program_frame = ScrollableFrame3(self.work_frame)
-		self.program_frame.grid(row=0, column=1, pady=10, padx=5, rowspan=4)
+		self.work_frame.rowconfigure(0, weight=1)
+		self.work_frame.columnconfigure(0, weight=1)
+		self.work_frame.columnconfigure(1, weight=1)
 
-		self.file_name_frame = Frame(self.work_frame,
-								bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.file_name_frame.grid(row=0, column=0, ipadx=0, ipady=0, padx=0, pady=0)
+		self.program_frame = ScrollableFrame(self.work_frame)
+		self.program_frame.grid(row=0, column=1, sticky="snew", padx=(1,0))
 
-		self.info_labelframe = LabelFrame(self.work_frame,
-								font = LABELFRAME_TXT_FONT,
-								bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.info_labelframe.grid(row=1, column=0, ipadx=10, ipady=5, padx=0, pady=0)
+		self.properties_frame =  Frame(self.work_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.properties_frame.grid(row=0, column=0, sticky="snew", padx=(0,1))
+		self.properties_frame.rowconfigure(0, weight=1)
+		self.properties_frame.rowconfigure(1, weight=5)
+		self.properties_frame.rowconfigure(2, weight=3)
+		self.properties_frame.rowconfigure(3, weight=2)
+		self.properties_frame.columnconfigure(0, weight=1)
+		
+		self.file_name_frame = Frame(self.properties_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.file_name_frame.grid(row=0, column=0, sticky="snew", pady=(0,10))
+		self.file_name_frame.rowconfigure(0, weight=1)
+		self.file_name_frame.columnconfigure(0, weight=1)
+		self.file_name_frame.columnconfigure(1, weight=4)
 
-		self.base_value_labelframe = LabelFrame(self.work_frame,
-								font = LABELFRAME_TXT_FONT,
-								bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.base_value_labelframe.grid(row=2, column=0, ipadx=32, ipady=2, padx=0, pady=0)
+		self.info_labelframe = LabelFrame(self.properties_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.info_labelframe.grid(row=1, column=0, sticky="snew")
+		self.info_labelframe.rowconfigure(0, weight=1)
+		self.info_labelframe.rowconfigure(1, weight=1)
+		self.info_labelframe.rowconfigure(2, weight=1)
+		self.info_labelframe.rowconfigure(3, weight=1)
+		self.info_labelframe.rowconfigure(4, weight=1)
+		self.info_labelframe.rowconfigure(5, weight=1)
+		self.info_labelframe.columnconfigure(0, weight=1)
+		self.info_labelframe.columnconfigure(1, weight=4)
+		self.info_labelframe.columnconfigure(2, weight=4)
 
-		self.control_frame = Frame(self.work_frame,
-								bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
-		self.control_frame.grid(row=3, column=0, ipadx=0, ipady=0, padx=0, pady=0)
+		self.base_value_labelframe = LabelFrame(self.properties_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.base_value_labelframe.grid(row=2, column=0, sticky="snew")
+		self.base_value_labelframe.rowconfigure(0, weight=1)
+		self.base_value_labelframe.rowconfigure(1, weight=1)
+		self.base_value_labelframe.columnconfigure(0, weight=2)
+		self.base_value_labelframe.columnconfigure(1, weight=1)
+
+		self.control_frame = Frame(self.properties_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.control_frame.grid(row=3, column=0, sticky="snew", pady=(10,0))
+		self.control_frame.rowconfigure(0, weight=1)
+		self.control_frame.columnconfigure(0, weight=1)
+		self.control_frame.columnconfigure(1, weight=1)
+		self.control_frame.columnconfigure(2, weight=1)
 		
 		# In file_name_frame
 		self.experiment_name_label = Label(self.file_name_frame,
 							bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 							text = QuantitativeKit_Language["KitName Label"][language],
 							fg = LABEL_TXT_COLOR,
-							font = ('Helvetica', 12),
+							font = ('Helvetica', 10),
 							anchor = 'e')
-		self.experiment_name_label.grid(row=0, column=0, padx=5, sticky=E)
+		self.experiment_name_label.grid(row=0, column=0, sticky=E)
 
 		self.experiment_name_text = Text(self.file_name_frame,
 							width = 22,
 							height = 1,
 							bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 							fg = LABEL_TXT_COLOR,
-							font = ('Arial', 14))
-		self.experiment_name_text.grid(row=0, column=1, padx=2, pady=30)
+							font = ('Helvetica', 12))
+		self.experiment_name_text.grid(row=0, column=1)
 
 		# In info_labelframe
 		self.concentration_label = Label(self.info_labelframe,
@@ -9184,14 +9126,14 @@ class SettingFrame(Frame):
 									text = QuantitativeKit_Language["Concentration Label"][language],
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-		self.concentration_label.grid(row=0, column=1, padx=6, pady=5)
+		self.concentration_label.grid(row=0, column=1)
 
 		self.value_label = Label(self.info_labelframe,
 									bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 									text = QuantitativeKit_Language["Value Label"][language],
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-		self.value_label.grid(row=0, column=2, padx=6, pady=5)
+		self.value_label.grid(row=0, column=2)
 
 		numeric_label_list = list(range(0,5))
 		self.concentration_entry_list = list(range(0,5))
@@ -9202,17 +9144,17 @@ class SettingFrame(Frame):
 									text = str(i+1),
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-			numeric_label_list[i].grid(row=i+1, column=0, padx=25, pady=10)
+			numeric_label_list[i].grid(row=i+1, column=0, sticky="snew")
 
 			self.concentration_entry_list[i] = Entry(self.info_labelframe,
-												width=12, 
+												width=10, 
 												font=('Arial',14))
-			self.concentration_entry_list[i].grid(row=i+1, column=1)
+			self.concentration_entry_list[i].grid(row=i+1, column=1, sticky="snew")
 
 			self.value_entry_list[i] = Entry(self.info_labelframe,
-												width=12, 
+												width=10, 
 												font=('Arial',14))
-			self.value_entry_list[i].grid(row=i+1, column=2)
+			self.value_entry_list[i].grid(row=i+1, column=2, sticky="snew")
 
 		# In base_value_labelframe
 		shift_label = Label(self.base_value_labelframe,
@@ -9220,31 +9162,33 @@ class SettingFrame(Frame):
 									text = "       ",
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-		shift_label.grid(row=0, column=0, padx=5, pady=5)
+		shift_label.grid(row=0, column=0, sticky="snew")
 
 		self.base_value_label = Label(self.base_value_labelframe,
+									anchor="e",
 									bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 									text = QuantitativeKit_Language["NValue Label"][language],
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-		self.base_value_label.grid(row=0, column=1, padx=16, pady=5)
+		self.base_value_label.grid(row=0, column=1, padx=(0,5), sticky="snew")
 
 		self.base_value_entry = Entry(self.base_value_labelframe,
 								width=10, 
-								font=('Arial',15))
-		self.base_value_entry.grid(row=0, column=2, padx=13, pady=10)
+								font=('Arial',12))
+		self.base_value_entry.grid(row=0, column=2, sticky="snew")
 
 		self.base2_value_label = Label(self.base_value_labelframe,
+									anchor="e",
 									bg = MAIN_FUNCTION_FRAME_BGD_COLOR,
 									text = QuantitativeKit_Language["NValue2 Label"][language],
 									font = LABEL_TXT_FONT,
 									fg = LABEL_TXT_COLOR)
-		self.base2_value_label.grid(row=1, column=1, padx=16, pady=5)
+		self.base2_value_label.grid(row=1, column=1, padx=(0,5), sticky="snew")
 
 		self.base2_value_entry = Entry(self.base_value_labelframe,
 								width=10, 
-								font=('Arial',15))
-		self.base2_value_entry.grid(row=1, column=2, padx=13, pady=10)
+								font=('Arial',14))
+		self.base2_value_entry.grid(row=1, column=2, sticky="snew")
 								
 		
 		# In control_frame
@@ -9257,7 +9201,7 @@ class SettingFrame(Frame):
 								fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
 								borderwidth = 0,
 								command = self.save_clicked)
-		self.save_button.pack(side=LEFT, padx=2, pady=10, ipadx=23, ipady=5)
+		self.save_button.grid(row=0, column=0, sticky="snew")
 
 		self.delete_button = Button(self.control_frame,
 								text = QuantitativeKit_Language["Delete Button"][language],
@@ -9268,7 +9212,7 @@ class SettingFrame(Frame):
 								fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
 								borderwidth = 0,
 								command = self.delete_clicked)
-		self.delete_button.pack(side=LEFT, padx=2, pady=10, ipadx=22, ipady=5)
+		self.delete_button.grid(row=0, column=1, sticky="snew", padx=2)
 
 		self.clear_button = Button(self.control_frame,
 								text = QuantitativeKit_Language["Clear Button"][language],
@@ -9279,7 +9223,7 @@ class SettingFrame(Frame):
 								fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
 								borderwidth = 0,
 								command = self.clear_clicked)
-		self.clear_button.pack(side=LEFT, padx=2, pady=10, ipadx=22, ipady=5)
+		self.clear_button.grid(row=0, column=2, sticky="snew")
 
 		# In button frame
 		self.back_button = Button(self.button_frame,
@@ -9291,7 +9235,7 @@ class SettingFrame(Frame):
 								fg = SWITCH_PAGE_BUTTON_TXT_COLOR,
 								borderwidth = 0,
 								command = self.back_clicked)
-		self.back_button.pack(side=LEFT, padx=6, pady=0, ipady=10, ipadx=30, anchor=W)
+		self.back_button.pack(side=LEFT, padx=0, pady=0, ipady=10, ipadx=30, anchor=W)
 
 		self.next_button = Button(self.button_frame,
 								text = QuantitativeKit_Language["Analysis Button"][language],
@@ -9423,7 +9367,7 @@ class SettingFrame(Frame):
 									font = PROGRAM_BUTTON_TXT_FONT,
 									bg = PROGRAM_BUTTON_BGD_COLOR,
 									fg = PROGRAM_BUTTON_TXT_COLOR,
-									width = 43,
+									width = 51,
 									borderwidth = 0)
 			self.program_button[os.listdir(programs_quantitative_path).index(file)]['command'] = partial(self.program_clicked, os.listdir(programs_quantitative_path).index(file))
 			self.program_button[os.listdir(programs_quantitative_path).index(file)].pack(pady=2, ipady=5, fill=BOTH, expand=TRUE)
@@ -9446,7 +9390,7 @@ class SettingFrame(Frame):
 		concen5_enalble = 1
 		try:
 			self.value1 = float(sheet["C2"].value)
-			self.concen1 = float(sheet["B2"].value)
+			self.concen1 = int(sheet["B2"].value)
 			concen_1_pt = [self.concen1, self.value1]
 		except:
 			concen1_enalble = 0
@@ -9454,7 +9398,7 @@ class SettingFrame(Frame):
 			
 		try:
 			self.value2 = float(sheet["C3"].value)
-			self.concen2 = float(sheet["B3"].value)
+			self.concen2 = int(sheet["B3"].value)
 			concen_2_pt = [self.concen2, self.value2]
 		except:
 			concen2_enalble = 0
@@ -9462,7 +9406,7 @@ class SettingFrame(Frame):
 			
 		try:
 			self.value3 = float(sheet["C4"].value)
-			self.concen3 = float(sheet["B4"].value)
+			self.concen3 = int(sheet["B4"].value)
 			concen_3_pt = [self.concen3, self.value3]
 		except:
 			concen3_enalble = 0
@@ -9470,7 +9414,7 @@ class SettingFrame(Frame):
 			
 		try:
 			self.value4 = float(sheet["C5"].value)
-			self.concen4 = float(sheet["B5"].value)
+			self.concen4 = int(sheet["B5"].value)
 			concen_4_pt = [self.concen4, self.value4]
 		except:
 			concen4_enalble = 0
@@ -9478,7 +9422,7 @@ class SettingFrame(Frame):
 			
 		try:
 			self.value5 = float(sheet["C6"].value)
-			self.concen5 = float(sheet["B6"].value)
+			self.concen5 = int(sheet["B6"].value)
 			concen_5_pt = [self.concen5, self.value5]
 		except:
 			concen5_enalble = 0
@@ -9788,20 +9732,6 @@ class MainMenu(Frame):
 		self.connect_button['text'] = MainScreen_Language['Setting Button 1'][language]
 		self.exit_button['text'] = MainScreen_Language['Exit Button'][language]
 
-		try:
-			self.thr1_button['text'] = MainScreen_Language['Environment Button'][language]
-			self.thr2_button['text'] = MainScreen_Language['Host Button'][language]
-			self.threshold_label_frame['text'] = MainScreen_Language['Screening LabelFrame'][language]
-		except:
-			pass
-
-		try:
-			self.setting_button['text'] = MainScreen_Language['Setting Button 2'][language]
-			self.analysis_button['text'] = MainScreen_Language['Analysis Button'][language]
-			self.threshold_label_frame['text'] = MainScreen_Language['Quantitative LabelFrame'][language]
-		except:
-			pass
-
 		### View Result ###
 		self.base_window.view_results.title_label['text'] = ViewResult_Language['Title Label'][language]
 		self.base_window.view_results.back_button['text'] = ViewResult_Language['Back Button'][language]
@@ -9818,12 +9748,6 @@ class MainMenu(Frame):
 		self.base_window.id_create.back_button['text'] = CreateFile_Language["Back Button"][language]
 		self.base_window.id_create.create_button['text'] = CreateFile_Language["Create Button"][language]
 		self.base_window.id_create.load_button['text'] = CreateFile_Language["Load Button"][language]
-
-		try:
-			self.base_window.id_create.sample_name_label['text'] = CreateFile_Language["SampleName Label"][language]
-			self.base_window.id_create.ok_button['text'] = CreateFile_Language["OK Button"][language]
-		except:
-			pass
 
 		### Setting ###
 		self.base_window.connect.back_button['text'] = Connect_Language["Back Button"][language]
@@ -9859,6 +9783,7 @@ class MainMenu(Frame):
 		self.base_window.quantitative_programs_list.back_button['text'] = QuantitativeProgramList_Language["Back Button"][language]
 
 		### Quantitative 0 ###
+		self.base_window.quantitative_analysis_0.title_label['text'] = Quantitative0_Language['Title Label'][language]
 		self.base_window.quantitative_analysis_0.experiment_name_label['text'] = Quantitative0_Language['ExperimentName Label'][language]
 		self.base_window.quantitative_analysis_0.user_name_label['text'] = Quantitative0_Language['TechnicianName Label'][language]
 		self.base_window.quantitative_analysis_0.template_name_label['text'] = Quantitative0_Language['TemplateName Label'][language]
