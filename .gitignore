@@ -1,0 +1,22 @@
+# PyInstaller
+/dist/
+/build/
+*.spec
+
+# Release
+/release/
+/app/
+
+# Cache
+__pycache__/
+*.pyc
+
+# Source
+/dev/
+
+#Updater
+/updater/
+
+# Data
+/data/ 
+/programs/
