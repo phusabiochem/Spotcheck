@@ -15,7 +15,7 @@ __pycache__/
 /dev/
 
 #Updater
-/updater/
+# /updater/
 
 # Data
 /data/ 
