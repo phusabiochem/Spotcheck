@@ -3,3 +3,8 @@
 
 [RELEASE - v1.0.1] 11/02/26 
 + Change CT range 
+
+[RELEASE - v1.1.0] 28/04/26 
++ Remove the standard curve
++ Allow setting the negative threshold 
++ Add doubtful value to the result
