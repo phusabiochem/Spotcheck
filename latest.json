@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
-  "url": "https://github.com/phusabiochem/Spotcheck/releases/download/v1.0.1/spotcheck_v1.0.1.tar.xz",
-  "sha256": "99342ec9ec1d208a302ae90f69429d9613654e7b9e2b79defde59c22625b9e40",
-  "changelog": "Update version 1.0.1",
+  "version": "1.1.0",
+  "url": "https://github.com/phusabiochem/Spotcheck/releases/download/v1.1.0/spotcheck_v1.1.0.tar.xz",
+  "sha256": "cd343128be5c4525901b8d21e9c9836f1dffedc20c02437730f929891e2618b3",
+  "changelog": "Update version 1.1.0",
   "force": false
 }
