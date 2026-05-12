@@ -8,3 +8,6 @@
 + Remove the standard curve
 + Allow setting the negative threshold (with false positive rate)
 + Add doubtful value to the result
+
+[RELEASE - v1.1.1] 12/05/26
++ Change email authentication with Gmail API (OAuth2)
