@@ -11,3 +11,6 @@
 
 [RELEASE - v1.1.1] 12/05/26
 + Change email authentication with Gmail API (OAuth2)
+
+[RELEASE - v1.2.0] 29/07/26
++ Change result threshold
