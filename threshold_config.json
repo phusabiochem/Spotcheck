@@ -1,0 +1,32 @@
+{
+    "negative": {
+        "max_val": 1.0,
+        "cp_text": "0",
+        "ct_text": "-",
+        "color": "#5EDC03"
+    },
+    "doubt": {
+        "max_val": 1.1,
+        "cp_text": "10-100",
+        "ct_text": "> 34",
+        "color": "#659FFC"
+    },
+    "low_copy": {
+        "max_val": 1.3,
+        "cp_text": "101-1000",
+        "ct_text": "30-34",
+        "color": "#F89DAA"
+    },
+    "medium_copy": {
+        "max_val": 1.5,
+        "cp_text": "1001-10000",
+        "ct_text": "26-29",
+        "color": "#FFAA34"
+    },
+    "positive": {
+        "max_val": null,
+        "cp_text": "> 10000",
+        "ct_text": "< 26",
+        "color": "#FF4F4F"
+    }
+}

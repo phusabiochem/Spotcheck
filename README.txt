@@ -14,3 +14,6 @@
 
 [RELEASE - v1.2.0] 29/07/26
 + Change result threshold
+
+[RELEASE - v1.2.1] 05/08/26
++ Add a threshold editing function
